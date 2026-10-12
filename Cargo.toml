@@ -1,0 +1,66 @@
+[package]
+name = "pubunit"
+version = "0.1.0"
+edition = "2024"
+# ucum-units needs 1.89.
+rust-version = "1.89"
+license = "Apache-2.0"
+description = "Exact, kind-aware checking and conversion of UCUM units, with base dimensions and quantity kinds declared as data."
+repository = "https://github.com/schryer/pubunit"
+documentation = "https://docs.rs/pubunit"
+readme = "README.md"
+keywords = ["ucum", "units", "dimensional-analysis", "quantity-kind", "publet"]
+categories = ["science", "parser-implementations", "command-line-utilities"]
+# Anchored with /: like gitignore patterns, a bare name matches at any depth.
+include = ["/src/**/*.rs", "/README.md", "/CHANGELOG.md", "/LICENSE", "/NOTICE", "/SECURITY.md", "/SUPPLY-CHAIN.md"]
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--generate-link-to-definition"]
+
+[lib]
+name = "pubunit"
+path = "src/lib.rs"
+
+[[bin]]
+name = "pubunit"
+path = "src/main.rs"
+
+[dependencies]
+# UCUM's grammar and atom table, conformance-tested. Pinned exactly: a
+# single release, June 2026, by a small team (SUPPLY-CHAIN.md, supply-chain/).
+ucum-units = "=0.1.0"
+# Exact rationals for conversion factors: no floating point anywhere.
+num-bigint = "0.5"
+num-integer = "0.1"
+num-traits = "0.2"
+# The definitions format.
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[profile.release]
+overflow-checks = true
+
+[lints.rust]
+unsafe_code = "forbid"
+missing_docs = "deny"
+missing_debug_implementations = "warn"
+unreachable_pub = "warn"
+rust_2018_idioms = { level = "warn", priority = -1 }
+
+[lints.clippy]
+all = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+# Exact results are the point (publet spec 4.1, R8): floating point cannot
+# give them. tools/check-floats.sh also refuses the f32 and f64 types in src/.
+float_arithmetic = "deny"
+float_cmp = "deny"
+lossy_float_literal = "deny"
+unwrap_used = "deny"
+expect_used = "deny"
+panic = "deny"
+indexing_slicing = "deny"
+# Determinism: results must not depend on hash iteration order.
+mutable_key_type = "deny"
+missing_errors_doc = "warn"
+missing_panics_doc = "warn"

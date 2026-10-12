@@ -1,0 +1,42 @@
+# Fuzz targets for what pubunit reads from outside: UCUM expressions, which
+# come from publets anyone can write, and definitions. A workspace of its
+# own: it needs a nightly compiler and libFuzzer, and none of its
+# dependencies belong in pubunit's supply chain.
+#
+#   cargo +nightly fuzz run parse     # until stopped
+#   make fuzz-smoke                   # every target briefly
+[package]
+name = "pubunit-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2024"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+pubunit = { path = ".." }
+
+[workspace]
+
+[[bin]]
+name = "parse"
+path = "fuzz_targets/parse.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "reduce"
+path = "fuzz_targets/reduce.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "definitions"
+path = "fuzz_targets/definitions.rs"
+test = false
+doc = false
+bench = false

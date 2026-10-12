@@ -1,0 +1,102 @@
+
+# cargo-vet audits file
+
+[audits]
+
+[[trusted.autocfg]]
+criteria = "safe-to-deploy"
+user-id = 539 # Josh Stone (cuviper)
+start = "2019-05-22"
+end = "2027-10-12"
+notes = "Trusted by Mozilla, ISRG and the Bytecode Alliance, whose audits this project imports; pubunit adopts their decision rather than re-reviewing, as publet and pubrel do."
+
+[[trusted.itoa]]
+criteria = "safe-to-deploy"
+user-id = 3618 # David Tolnay (dtolnay)
+start = "2019-05-02"
+end = "2027-10-12"
+notes = "Trusted by Mozilla, ISRG and the Bytecode Alliance, whose audits this project imports; pubunit adopts their decision rather than re-reviewing, as publet and pubrel do."
+
+[[trusted.num-bigint]]
+criteria = "safe-to-deploy"
+user-id = 539 # Josh Stone (cuviper)
+start = "2019-09-04"
+end = "2027-10-12"
+notes = "Trusted by Mozilla, ISRG and the Bytecode Alliance, whose audits this project imports; pubunit adopts their decision rather than re-reviewing, as publet and pubrel do."
+
+[[trusted.num-integer]]
+criteria = "safe-to-deploy"
+user-id = 539 # Josh Stone (cuviper)
+start = "2019-05-20"
+end = "2027-10-12"
+notes = "Trusted by Mozilla, ISRG and the Bytecode Alliance, whose audits this project imports; pubunit adopts their decision rather than re-reviewing, as publet and pubrel do."
+
+[[trusted.proc-macro2]]
+criteria = "safe-to-deploy"
+user-id = 3618 # David Tolnay (dtolnay)
+start = "2019-04-23"
+end = "2027-10-12"
+notes = "Trusted by Mozilla, ISRG and the Bytecode Alliance, whose audits this project imports; pubunit adopts their decision rather than re-reviewing, as publet and pubrel do."
+
+[[trusted.serde]]
+criteria = "safe-to-deploy"
+user-id = 3618 # David Tolnay (dtolnay)
+start = "2019-03-01"
+end = "2027-10-12"
+notes = "Trusted by Mozilla, ISRG and the Bytecode Alliance, whose audits this project imports; pubunit adopts their decision rather than re-reviewing, as publet and pubrel do."
+
+[[trusted.serde_core]]
+criteria = "safe-to-deploy"
+user-id = 3618 # David Tolnay (dtolnay)
+start = "2025-09-13"
+end = "2027-10-12"
+notes = "Trusted by Mozilla, ISRG and the Bytecode Alliance, whose audits this project imports; pubunit adopts their decision rather than re-reviewing, as publet and pubrel do."
+
+[[trusted.serde_derive]]
+criteria = "safe-to-deploy"
+user-id = 3618 # David Tolnay (dtolnay)
+start = "2019-03-01"
+end = "2027-10-12"
+notes = "Trusted by Mozilla, ISRG and the Bytecode Alliance, whose audits this project imports; pubunit adopts their decision rather than re-reviewing, as publet and pubrel do."
+
+[[trusted.serde_json]]
+criteria = "safe-to-deploy"
+user-id = 3618 # David Tolnay (dtolnay)
+start = "2019-02-28"
+end = "2027-10-12"
+notes = "Trusted by Mozilla, ISRG and the Bytecode Alliance, whose audits this project imports; pubunit adopts their decision rather than re-reviewing, as publet and pubrel do."
+
+[[trusted.syn]]
+criteria = "safe-to-deploy"
+user-id = 3618 # David Tolnay (dtolnay)
+start = "2019-03-01"
+end = "2027-10-12"
+notes = "Trusted by Mozilla, ISRG and the Bytecode Alliance, whose audits this project imports; pubunit adopts their decision rather than re-reviewing, as publet and pubrel do."
+
+[[trusted.thiserror]]
+criteria = "safe-to-deploy"
+user-id = 3618 # David Tolnay (dtolnay)
+start = "2019-10-09"
+end = "2027-10-12"
+notes = "Trusted by Mozilla, ISRG and the Bytecode Alliance, whose audits this project imports; pubunit adopts their decision rather than re-reviewing, as publet and pubrel do."
+
+[[trusted.thiserror-impl]]
+criteria = "safe-to-deploy"
+user-id = 3618 # David Tolnay (dtolnay)
+start = "2019-10-09"
+end = "2027-10-12"
+notes = "Trusted by Mozilla, ISRG and the Bytecode Alliance, whose audits this project imports; pubunit adopts their decision rather than re-reviewing, as publet and pubrel do."
+
+[[trusted.unicode-ident]]
+criteria = "safe-to-deploy"
+user-id = 3618 # David Tolnay (dtolnay)
+start = "2021-10-02"
+end = "2027-10-12"
+notes = "Trusted by Mozilla, ISRG and the Bytecode Alliance, whose audits this project imports; pubunit adopts their decision rather than re-reviewing, as publet and pubrel do."
+
+[[trusted.zmij]]
+criteria = "safe-to-deploy"
+user-id = 3618 # David Tolnay (dtolnay)
+start = "2025-12-18"
+end = "2027-10-12"
+notes = "Trusted by Mozilla, ISRG and the Bytecode Alliance, whose audits this project imports; pubunit adopts their decision rather than re-reviewing, as publet and pubrel do."

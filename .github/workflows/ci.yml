@@ -1,0 +1,54 @@
+name: ci
+
+on:
+  push: { branches: [main] }
+  pull_request:
+  # Nightly: the same checks, plus longer fuzzing and the tests on the
+  # latest stable and beta Rust, so new advisories and a new Rust that
+  # breaks the build show up within a day.
+  schedule: [{ cron: '17 3 * * *' }]
+  workflow_dispatch:
+
+jobs:
+  # pubkit's shared Rust CI, with pubunit's own gates and checks named:
+  #
+  # - gates: the no-float guard and the UCUM table check beside fmt, clippy,
+  #   docs and packaging -- cheap, so they fail fast before the matrix.
+  # - test: exact results must be the same everywhere, so the tests run on
+  #   Linux, macOS and Windows, and on a 32-bit and a big-endian machine.
+  # - functional: the Gherkin suite, with UCUM's functional tests, then the
+  #   supply-chain report, which must be committed up to date.
+  # - msrv: a build on the oldest Rust pubunit promises, its rust-version.
+  # - fuzz: the parser, reduction and the definitions reader, after
+  #   replaying every input that once found a bug (fuzz/regressions/).
+  ci:
+    uses: schryer/pubkit/.github/workflows/rust-ci.yml@v0.5.0
+    with:
+      gates: fmt-check guard-floats ucum-table-check lint doc publish-check
+      functional: functional supply-chain-check
+      msrv: true
+      fuzz: true
+      cross-targets: '["i686-unknown-linux-gnu", "s390x-unknown-linux-gnu"]'
+
+  # Advisories, licences and sources (cargo deny), and every dependency
+  # audited, trusted or exempt with its evidence (cargo vet).
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - run: cargo install --locked cargo-deny --version 0.20.2
+      - run: make deny
+      - run: cargo install --locked cargo-vet --version 0.10.2
+      - run: make vet
+
+  # The shared release workflow: on a pull request, a code change records
+  # what it changes, the public API moves only as far as those changes
+  # allow, and a release is the bump they require, published; on main, a
+  # published version is tagged and released. CI signs nothing; the release
+  # was signed when the package publet was published.
+  release:
+    needs: [ci, audit]
+    uses: schryer/pubrel/.github/workflows/release.yml@v0.5.1
+    with: { pubrel-version: v0.5.1, semver-checks-version: 0.51.0 }
+    permissions:
+      contents: write

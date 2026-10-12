@@ -1,0 +1,212 @@
+/*!
+Exact, kind-aware checking and conversion of [UCUM] units, with base
+dimensions and quantity kinds declared as data.
+
+```
+use pubunit::{Definitions, Registry};
+
+let reg = Registry::with_definitions(&Definitions::from_json(r#"{
+  "dimensions": [
+    { "symbol": "{tray}", "name": "growing tray" },
+    { "symbol": "{CO2e}", "name": "carbon dioxide equivalent" }
+  ],
+  "kinds": [
+    { "name": "climate impact per tray", "dimension": { "g": 1, "{CO2e}": 1, "{tray}": -1 },
+      "units": ["g{CO2e}/{tray}", "kg{CO2e}/{tray}"] }
+  ]
+}"#)?)?;
+
+// Exact conversion within a kind: no floating point anywhere.
+let v = reg.convert_within(&"0.42".parse()?, "kg{CO2e}/{tray}", "g{CO2e}/{tray}",
+                           "climate impact per tray")?;
+assert_eq!(v.to_string(), "420");
+
+// A kilogram of CO2e is not a kilogram of basil.
+assert!(reg.check_kind("kg/{tray}", "climate impact per tray").is_err());
+# Ok::<(), pubunit::Error>(())
+```
+
+# Overview
+
+| Item | What it is |
+|---|---|
+| [`parse`], [`Term`] | UCUM's grammar, parsed into a public tree |
+| [`Registry`] | UCUM's atoms plus declared ones: [`validate`](Registry::validate), [`reduce`](Registry::reduce), [`convert`](Registry::convert), [`check_kind`](Registry::check_kind) |
+| [`Reduced`] | a unit as a [`Dimension`] and an exact factor, with checked `*`, `/` and powers |
+| [`Dimension`] | integer exponents over base units, UCUM's seven and declared ones |
+| [`Rational`] | the exact numbers every factor and converted value is |
+| [`Definitions`] | the serde format for declared [`BaseDimension`]s, [`UnitDefinition`]s and [`QuantityKind`]s |
+| [`Error`] | why something failed |
+
+The invariants it keeps:
+
+- **No floating point.** Factors are read from UCUM's own decimal strings
+  as rationals, and every result is exact. (No floating-point type appears in
+  the source; a guard checks.)
+- **Kinds are declared, never inferred.** Energy and torque share the
+  dimension `m2.s-2.g`; only a declaration says which a column measures.
+- **Nothing ucum-units refuses is accepted.** Every expression a registry
+  reads is also read by [ucum-units], which passes UCUM's conformance
+  suite, with declared atoms stood in for by an annotation.
+- **Inputs are bounded.** An expression is at most [`MAX_LEN`] bytes,
+  [`MAX_DEPTH`] levels deep, with exponents within ±[`MAX_EXPONENT`], and
+  a factor's numerator and denominator within [`MAX_FACTOR_BITS`] bits.
+
+This page goes on with [examples](#example-a-currency), [why this
+crate](#why-this-crate), [related crates](#related-crates), [crate
+features](#crate-features), [the minimum Rust version](#minimum-rust-version)
+and [versioning](#versioning).
+
+# Example: a currency
+
+UCUM has no money. Each currency is declared as a base dimension of its
+own, so euros never convert to dollars: an exchange rate is a dated fact,
+not a unit.
+
+```
+use pubunit::{Definitions, Error, Registry};
+
+let reg = Registry::with_definitions(&Definitions::from_json(r#"{
+  "dimensions": [
+    { "symbol": "[EUR]", "name": "euro" },
+    { "symbol": "[USD]", "name": "US dollar" }
+  ]
+}"#)?)?;
+assert_eq!(reg.reduce("[EUR]/kg")?.dimension().to_string(), "g-1.[EUR]");
+assert!(matches!(
+    reg.convert(&"1".parse()?, "[EUR]", "[USD]"),
+    Err(Error::Incommensurable { .. })
+));
+# Ok::<(), pubunit::Error>(())
+```
+
+# Example: a unit defined by another
+
+A declared unit is an exact multiple of one that already exists.
+
+```
+use pubunit::{Definitions, Registry};
+
+let reg = Registry::with_definitions(&Definitions::from_json(r#"{
+  "dimensions": [{ "symbol": "{tray}", "name": "growing tray" }],
+  "units": [{ "symbol": "{flat}", "name": "flat of six trays", "value": "6", "unit": "{tray}" }]
+}"#)?)?;
+let v = reg.convert(&"3".parse()?, "{flat}", "{tray}")?;
+assert_eq!(v.to_string(), "18");
+# Ok::<(), pubunit::Error>(())
+```
+
+# Example: what is refused
+
+```
+use pubunit::{Error, Registry};
+
+let reg = Registry::ucum();
+// UCUM reads {trays} as the number 1; pubunit refuses it unless declared.
+assert!(matches!(reg.reduce("kW.h/{trays}"), Err(Error::UndeclaredAnnotation { .. })));
+// A logarithmic unit has no linear factor.
+assert!(matches!(reg.reduce("dB"), Err(Error::NotLinear { .. })));
+// Celsius converts on its own, but a product with it means nothing.
+assert_eq!(reg.convert(&"25".parse()?, "Cel", "K")?.to_string(), "298.15");
+assert!(matches!(reg.reduce("Cel.m"), Err(Error::NotLinear { .. })));
+// Results that are not finite decimals stay exact.
+assert_eq!(reg.convert(&"1".parse()?, "[ft_i]", "[yd_i]")?.to_string(), "1/3");
+# Ok::<(), pubunit::Error>(())
+```
+
+# Example: the parse tree and dimension algebra
+
+The tree and the algebra are public, so that symbolic computation can
+carry units through a formula.
+
+```
+use pubunit::{Registry, Term};
+
+let reg = Registry::ucum();
+let power = reg.reduce("W")?;
+let time = reg.reduce("h")?;
+let energy = power.checked_mul(&time).ok_or("overflow")?;
+assert_eq!(energy, reg.reduce("W.h")?);
+
+let tree = pubunit::parse("kg.m/s2")?;
+assert!(matches!(tree, Term::Div(..)));
+assert_eq!(reg.reduce_term(&tree)?, reg.reduce("N")?);
+# Ok::<(), Box<dyn std::error::Error>>(())
+```
+
+# Why this crate?
+
+A unit library answers "do these units have the same dimension, and what
+is the factor?". A publication that people check needs more:
+
+- **Exact factors.** UCUM writes its values as decimals (`0.3048`,
+  `6.67430e-11`). Read as floats, a conversion depends on rounding, and two
+  implementations can disagree in the last digit. pubunit reads them as
+  rationals, so 1 `[ft_i]` is 0.3048 `m` exactly and 1 `[ft_i]` is 1/3
+  `[yd_i]` exactly.
+- **Our own base dimensions.** Trays, batches, currencies and substance
+  equivalents are dimensions, not UCUM's dimensionless annotations. Adding
+  a kilogram of CO2 equivalent to a kilogram of basil must fail.
+- **Quantity kinds.** Some different things share a dimension: energy and
+  torque, Hz and Bq. A kind names what is measured, and which units may
+  measure it.
+
+# Related crates
+
+Each was checked at the version given: ucum-units by reading its source and
+running it as the tests' oracle, the others from their crates.io metadata
+and documentation.
+
+| Crate | Version | How pubunit relates to it |
+|---|---|---|
+| [ucum-units] | 0.1.0 | **Built on.** It reads every expression, so pubunit accepts nothing it refuses. Its essence file is the source of pubunit's atom table. Its README reports passing UCUM's conformance cases, and pubunit's own suite runs the validation and conversion cases. Its factors are floating point and its parse tree is private, so pubunit has its own exact layer and tree. |
+| [octofhir-ucum] | 0.6.1 | Made for `FHIRPath`, with a heavier dependency tree (`regex`, `phf`, `rust_decimal`). A fallback parser if ucum-units stalls. |
+| [uom] | 0.38.0 | Units checked at compile time, for Rust code. Publication units arrive at run time. |
+
+`wise_units`, which an earlier plan named as a test oracle, is no longer on
+crates.io or GitHub. The tests compare pubunit with ucum-units' own floating-point
+factors instead, for every atom and prefix.
+
+# Crate features
+
+None.
+
+# Minimum Rust version
+
+1.89, the `rust-version` in `Cargo.toml`, which ucum-units needs. It may
+rise in a release that bumps the second number of the version, never in one
+that bumps only the third.
+
+# Versioning
+
+pubunit follows Cargo's convention: below 1.0, a breaking change bumps the
+second number (`0.y.z`) and anything else the third. Each change is recorded
+with [pubrel] as it lands, and the changelog is generated from the package
+publet `pkg.pubunit`.
+
+[UCUM]: https://ucum.org/ucum
+[ucum-units]: https://crates.io/crates/ucum-units
+[octofhir-ucum]: https://crates.io/crates/octofhir-ucum
+[uom]: https://crates.io/crates/uom
+[pubrel]: https://github.com/schryer/pubrel
+*/
+
+mod defs;
+mod dimension;
+mod error;
+mod expr;
+mod rational;
+mod registry;
+mod table;
+mod ucum_table;
+
+pub use defs::{BaseDimension, Definitions, QuantityKind, UnitDefinition};
+pub use dimension::{Dimension, UCUM_BASE_UNITS};
+pub use error::Error;
+pub use expr::{MAX_DEPTH, MAX_EXPONENT, MAX_LEN, Term, parse};
+pub use rational::{MAX_DECIMAL_EXPONENT, Rational};
+pub use registry::{Annotations, MAX_FACTOR_BITS, Reduced, Registry, UcumSource};
+
+#[cfg(doctest)]
+#[doc = include_str!("../README.md")]
+struct ReadmeDoctests;
