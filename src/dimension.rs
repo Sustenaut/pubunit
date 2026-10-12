@@ -13,9 +13,12 @@ pub const UCUM_BASE_UNITS: [&str; 7] = ["m", "s", "g", "rad", "K", "C", "cd"];
 ///
 /// A base is named by its unit's symbol: UCUM's seven (`m`, `s`, `g`, `rad`,
 /// `K`, `C`, `cd`, see [`UCUM_BASE_UNITS`]) and any declared as data, such
-/// as `{tray}` or `[EUR]`. So a dimension reads as a UCUM product of base
-/// units: energy is `m2.s-2.g`. Zero exponents are never stored, so two
-/// equal dimensions compare equal however they were built.
+/// as `{tray}` or `[EUR]`. [`Display`](fmt::Display) writes a dimension
+/// compactly as base units with exponents: energy is `m2.s-2.g`, energy per
+/// tray `m2.s-2.g.{tray}-1`. That is not always valid UCUM, which gives an
+/// annotation no exponent; [`to_ucum`](Dimension::to_ucum) writes one that
+/// is. Zero exponents are never stored, so two equal dimensions compare
+/// equal however they were built.
 ///
 /// The algebra is exact and checked: [`checked_mul`](Dimension::checked_mul),
 /// [`checked_div`](Dimension::checked_div) and
@@ -157,6 +160,52 @@ impl Dimension {
         Some(Dimension(out))
     }
 
+    /// A UCUM expression of exactly this dimension, with factor 1: base
+    /// units with positive exponents, then `/` and those with negative ones.
+    /// A brace base, which UCUM gives no exponent, is repeated, so the text
+    /// grows with the exponents: a kind's are held within ±127 when
+    /// declared, but a `Dimension` built in code is not.
+    ///
+    /// ```
+    /// use pubunit::{Dimension, Registry};
+    ///
+    /// let d: Dimension = serde_json::from_str(r#"{"m": 2, "s": -2, "g": 1, "{tray}": -2}"#)?;
+    /// assert_eq!(d.to_string(), "m2.s-2.g.{tray}-2");
+    /// assert_eq!(d.to_ucum(), "m2.g/(s2.{tray}.{tray})");
+    /// assert_eq!(Dimension::base("s").checked_pow(-1).map(|d| d.to_ucum()), Some("/s".to_owned()));
+    /// assert_eq!(Dimension::dimensionless().to_ucum(), "1");
+    /// # Ok::<(), Box<dyn std::error::Error>>(())
+    /// ```
+    #[must_use]
+    pub fn to_ucum(&self) -> String {
+        let part = |positive: bool| -> Vec<String> {
+            self.iter()
+                .filter(|&(_, e)| (e > 0) == positive)
+                .map(|(base, e)| {
+                    let n = e.unsigned_abs();
+                    if base.starts_with('{') {
+                        vec![base; n as usize].join(".")
+                    } else if n == 1 {
+                        base.to_owned()
+                    } else {
+                        format!("{base}{n}")
+                    }
+                })
+                .collect()
+        };
+        let (num, den) = (part(true), part(false));
+        let den = match den.len() {
+            0 => String::new(),
+            1 if !den.concat().contains('.') => format!("/{}", den.concat()),
+            _ => format!("/({})", den.join(".")),
+        };
+        match (num.is_empty(), den.is_empty()) {
+            (true, true) => "1".to_owned(),
+            (true, false) => den,
+            _ => format!("{}{den}", num.join(".")),
+        }
+    }
+
     /// The exponents on UCUM's seven base units, in UCUM's order.
     pub(crate) fn ucum_part(&self) -> [i32; 7] {
         UCUM_BASE_UNITS.map(|b| self.exponent(b))
@@ -185,8 +234,8 @@ impl From<Dimension> for BTreeMap<String, i32> {
 }
 
 impl fmt::Display for Dimension {
-    /// A UCUM product of base units, such as `m2.s-2.g`; `1` when
-    /// dimensionless.
+    /// Base units with exponents, such as `m2.s-2.g`; `1` when
+    /// dimensionless. See [`Dimension::to_ucum`] for valid UCUM.
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         if self.is_dimensionless() {
             return f.write_str("1");
@@ -209,7 +258,7 @@ impl fmt::Display for Dimension {
 mod tests {
     use super::*;
 
-    // covers: dimension::Dimension::checked_pow
+    // covers: Dimension::checked_pow, Dimension::checked_mul
     #[test]
     fn overflow_is_refused_not_wrapped() {
         let d = Dimension::base("m").checked_pow(i32::MAX);
@@ -221,7 +270,7 @@ mod tests {
         assert_eq!(big.checked_mul(&Dimension::base("m")), None);
     }
 
-    // covers: dimension::Dimension::fmt
+    // covers: Dimension
     #[test]
     fn displays_ucum_bases_first() {
         let d = Dimension::from(BTreeMap::from([

@@ -455,10 +455,12 @@ impl Registry {
     /// - a symbol that is not `{...}` or `[...]`, or that UCUM or an earlier
     ///   declaration already defines;
     /// - an empty name, or a kind's name used twice;
-    /// - a unit's value that is not a number greater than zero, or its unit
-    ///   that does not reduce, or is not linear;
-    /// - a kind whose dimension names an unknown base, whose `units` is
-    ///   empty, or lists a unit that does not reduce to that dimension.
+    /// - a unit's value that is not a number greater than zero, its unit
+    ///   that does not reduce or is not linear, or a factor beyond
+    ///   [`MAX_FACTOR_BITS`];
+    /// - a kind whose dimension names an unknown base or has an exponent
+    ///   beyond ±127, whose `units` is empty, or lists a unit that does not
+    ///   reduce to that dimension.
     ///
     /// ```
     /// use pubunit::{Definitions, Error, Registry};
@@ -576,8 +578,10 @@ impl Registry {
     /// Fails as [`validate`](Registry::validate) does, and also on a special
     /// unit ([`Error::NotLinear`]) unless it is a temperature with an
     /// offset standing alone, and on an arbitrary unit
-    /// ([`Error::Arbitrary`]). [`Error::TooLarge`] reports an exponent that
-    /// overflows.
+    /// ([`Error::Arbitrary`]). Fails with [`Error::TooLarge`] when an
+    /// exponent on one of UCUM's base units would leave ±127, the range
+    /// ucum-units keeps, or a factor's numerator or denominator would exceed
+    /// [`MAX_FACTOR_BITS`].
     ///
     /// ```
     /// use pubunit::{Error, Registry};
@@ -791,9 +795,14 @@ impl Registry {
         if self.kinds.contains_key(&k.name) {
             return Err(bad("a kind of that name is already declared".to_owned()));
         }
-        for (base, _) in k.dimension.iter() {
+        for (base, e) in k.dimension.iter() {
             if !UCUM_BASE_UNITS.contains(&base) && !self.bases.contains(base) {
                 return Err(bad(format!("`{base}` is not a base dimension")));
+            }
+            // The range reduction keeps, so a kind can be met by some unit,
+            // and so Dimension::to_ucum on it stays small.
+            if i8::try_from(e).is_err() {
+                return Err(bad(format!("the exponent {e} of `{base}` is beyond ±127")));
             }
         }
         let allowed = match &k.units {
@@ -1057,7 +1066,7 @@ fn overflow() -> Error {
 mod tests {
     use super::*;
 
-    // covers: registry::Registry::reduce
+    // covers: Registry::reduce
     // Found while timing reduction: `[pi]64` written 120 times grew factors
     // to half a million digits, normalised by a gcd at every step, and ran
     // for minutes. A factor is now bounded by MAX_FACTOR_BITS.
@@ -1067,7 +1076,9 @@ mod tests {
         let expr = vec!["[pi]64"; 120].join(".");
         let start = std::time::Instant::now();
         assert!(matches!(reg.reduce(&expr), Err(Error::TooLarge { .. })));
-        assert!(start.elapsed() < std::time::Duration::from_secs(2));
+        // Generous, for tests run under emulation (i686, s390x in CI):
+        // unbounded, this took minutes.
+        assert!(start.elapsed() < std::time::Duration::from_secs(20));
         // Large but real factors still reduce.
         assert!(reg.reduce("Ym64").is_ok());
         assert!(reg.reduce("[pi]16").is_ok());

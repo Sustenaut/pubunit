@@ -1,7 +1,31 @@
 
 # cargo-vet audits file
 
-[audits]
+[[audits.ucum-units]]
+who = "Claude (AI assistant), reviewing for schryer"
+criteria = "safe-to-deploy"
+version = "0.1.0"
+notes = """
+Read in full on 2026-10-12: src/ (1,768 lines: analysis, dimension, display,
+error, lib, parser, quantity, tables) and build.rs (135 lines).
+
+- No unsafe code: #![forbid(unsafe_code)] in src/lib.rs.
+- No file, network, environment or process access at run time. The only
+  runtime dependency is thiserror. Tables are compiled in.
+- The parser is bounded on untrusted input: parenthesis nesting at most 256
+  (MAX_DEPTH), a linear step limit (16 steps per byte plus 1,024), and slices
+  taken only at ASCII boundaries it has scanned. Atom resolution has a depth
+  backstop and a cycle guard. Dimension exponents saturate at the i8 bounds
+  instead of overflowing.
+- build.rs reads only vendor/ucum-essence.xml, with roxmltree, and writes
+  only $OUT_DIR/ucum_tables.rs. Its panics fire only on malformed vendored
+  data, at build time.
+- Floating-point results (factors, convert) are not used by pubunit, which
+  computes exactly from the same essence file.
+
+An AI review, not a human one: re-certify under your own name if your
+policy requires a person.
+"""
 
 [[trusted.autocfg]]
 criteria = "safe-to-deploy"

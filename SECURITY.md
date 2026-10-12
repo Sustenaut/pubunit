@@ -47,14 +47,17 @@ never a panic, a hang, or an allocation out of proportion to the input.
 - a check that `src/ucum_table.rs` matches the essence file of the pinned
   ucum-units;
 - `cargo doc`, with warnings as errors, and `cargo publish --dry-run`;
-- the unit tests, doctests and the oracle test against ucum-units, on Linux,
+- the unit tests, doctests, property tests, test vectors from NIST SP 811
+  and the SI Brochure, and the oracle test against ucum-units, on Linux,
   macOS and Windows, and on a 32-bit (i686) and a big-endian (s390x) target
   under emulation;
+- a guard that every public function has an example and every `// covers:`
+  comment names a real item, with `TESTING.md` generated from them;
 - a build on the minimum Rust version;
 - the Gherkin suite, which runs the built binary, with UCUM's own functional
   tests;
-- fuzzing of the parser, reduction and conversion, and the definitions
-  reader (`fuzz/`), after replaying every input that once found a bug
+- fuzzing of the parser, reduction and conversion, the number reader, and
+  the definitions reader (`fuzz/`), after replaying every input that once found a bug
   (`fuzz/regressions/`);
 - `cargo deny check`: fails on any crate in the dependency tree with a
   RustSec advisory (vulnerable, unmaintained, unsound, or yanked), on a
@@ -71,12 +74,14 @@ never a panic, a hang, or an allocation out of proportion to the input.
 pubunit builds, for any target, whether it runs code at build time, and how
 it is vouched for. It is generated, and CI fails if it is stale.
 
-**ucum-units** is pinned to exactly 0.1.0. It is its only release, and no
-imported audit covers it, so its exemption in `supply-chain/config.toml`
-records what was read: its source forbids `unsafe`, and it has one runtime
-dependency. A new version is adopted only by changing the pin, reviewed
-like any other change, and `make ucum-table-check` then shows any change to
-UCUM's table.
+**ucum-units** is pinned to exactly 0.1.0, its only release. No imported
+audit covers it, so this project audited it for `safe-to-deploy`
+(`supply-chain/audits.toml`): all of its source and build script were read.
+It forbids `unsafe`, touches no file, network or process at run time, and
+bounds its parser's depth and steps. The review was done by an AI assistant
+for the maintainer, and the audit says so. A new version is adopted only by
+changing the pin, which needs a new audit, and `make ucum-table-check` then
+shows any change to UCUM's table.
 
 **In every release:** `pubrel prepare` runs `cargo deny`, `cargo vet`, the
 supply-chain report's check and the UCUM table's check before cutting a
@@ -85,7 +90,7 @@ publet.
 
 **Fuzzing found** three bugs before pubunit was published, all in printing
 a parsed expression back as text. `1+3+3` and `1-+3` read as symbols ending
-in a digit or a sign, which printed as other expressions; such symbols are
+in a digit or a sign, which printed as other expressions. Such symbols are
 now refused, as no UCUM atom has one. A reciprocal lost its parentheses:
 `(/s).m` printed as `/s.m`, which means 1/(s.m). Each has a regression test.
 Timing reduction found a fourth: `[pi]64` written 120 times, under 1 KB,

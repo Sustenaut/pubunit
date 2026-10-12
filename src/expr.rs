@@ -77,10 +77,17 @@ pub enum Term {
 /// # Errors
 ///
 /// Fails with [`Error::Syntax`] when the text is not a UCUM expression:
-/// empty, not printable ASCII, unbalanced, or with an operator where a unit
-/// belongs. Also fails, with [`Error::TooLarge`], on input beyond
-/// [`MAX_LEN`] bytes, [`MAX_DEPTH`] levels of parentheses, an exponent
-/// beyond ±[`MAX_EXPONENT`], or a factor beyond `u64`.
+/// - it is empty, or holds a character that is not printable ASCII;
+/// - a parenthesis, bracket or brace is not closed, or a `{` is nested
+///   inside an annotation;
+/// - an operator or an exponent stands where a unit belongs;
+/// - a symbol outside brackets ends in a digit or a sign, which no UCUM
+///   atom does, so `1+3+3` cannot be read two ways.
+///
+/// Fails with [`Error::TooLarge`] on input beyond [`MAX_LEN`] bytes or
+/// [`MAX_DEPTH`] levels of parentheses, on an exponent beyond
+/// ±[`MAX_EXPONENT`], however many digits it has, and on a factor beyond
+/// `u64`.
 ///
 /// ```
 /// let t = pubunit::parse("mg/dL")?;
@@ -242,13 +249,14 @@ impl Parser<'_> {
         let exponent = match exponent {
             None => 1,
             Some(e) => {
-                let n: i64 = e.parse().map_err(|_| self.error("an exponent too large"))?;
+                let too_large = || Error::TooLarge {
+                    what: format!("the exponent {e} (at most ±{MAX_EXPONENT})"),
+                };
+                let n: i64 = e.parse().map_err(|_| too_large())?;
                 if n.unsigned_abs() > u64::from(MAX_EXPONENT.unsigned_abs()) {
-                    return Err(Error::TooLarge {
-                        what: format!("the exponent {e} (at most ±{MAX_EXPONENT})"),
-                    });
+                    return Err(too_large());
                 }
-                i32::try_from(n).map_err(|_| self.error("an exponent too large"))?
+                i32::try_from(n).map_err(|_| too_large())?
             }
         };
         if symbol.is_empty() || symbol.starts_with(['+', '-']) {
@@ -381,7 +389,7 @@ mod tests {
         }
     }
 
-    // covers: expr::parse
+    // covers: parse
     #[test]
     fn exponents_split_from_symbols() {
         assert_eq!(parse("m2").ok(), Some(sym("m", 2)));
@@ -393,7 +401,7 @@ mod tests {
         assert_eq!(parse("B[10.nV]").ok(), Some(sym("B[10.nV]", 1)));
     }
 
-    // covers: expr::parse
+    // covers: parse
     #[test]
     fn left_associative() {
         let t = parse("kg/m.s").ok();
@@ -408,7 +416,7 @@ mod tests {
         );
     }
 
-    // covers: expr::parse
+    // covers: parse
     #[test]
     fn factors_and_annotations() {
         assert_eq!(
@@ -428,10 +436,14 @@ mod tests {
         );
     }
 
-    // covers: expr::parse
+    // covers: parse
     #[test]
     fn limits_hold() {
         assert!(matches!(parse("m65"), Err(Error::TooLarge { .. })));
+        assert!(matches!(
+            parse("m99999999999999999999"),
+            Err(Error::TooLarge { .. })
+        ));
         assert!(parse("m64").is_ok());
         let deep = format!("{}m{}", "(".repeat(40), ")".repeat(40));
         assert!(matches!(parse(&deep), Err(Error::TooLarge { .. })));
@@ -445,7 +457,7 @@ mod tests {
         ));
     }
 
-    // covers: expr::parse
+    // covers: parse
     // Found by fuzzing (fuzz/regressions/parse/symbol-ending-in-digit and
     // symbol-ending-in-sign): the symbol `1+3` with exponent 3 printed as
     // `1+33`, and `1-` with exponent +3 as `1-3`, which read back as other
@@ -459,7 +471,7 @@ mod tests {
         assert!(parse("10*+3").is_ok());
     }
 
-    // covers: expr::Term::fmt
+    // covers: Term, parse
     // Found by fuzzing (fuzz/regressions/parse/nested-reciprocal):
     // `/(/@/s)` printed as `//@/s`, which does not parse, and `(/s).m`
     // printed as `/s.m`, which means 1/(s.m).
@@ -479,7 +491,7 @@ mod tests {
         }
     }
 
-    // covers: expr::parse
+    // covers: parse
     #[test]
     fn syntax_errors() {
         for bad in [

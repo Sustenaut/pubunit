@@ -35,6 +35,13 @@ doc = false
 bench = false
 
 [[bin]]
+name = "rational"
+path = "fuzz_targets/rational.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
 name = "definitions"
 path = "fuzz_targets/definitions.rs"
 test = false
