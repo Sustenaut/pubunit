@@ -296,8 +296,10 @@ pub use registry::{Annotations, MAX_FACTOR_BITS, Reduced, Registry, UcumSource};
 /// These modules hold no code. Each is a document, kept in the repository as
 /// Markdown and rendered here so it is versioned with the crate.
 // Prose documents, some of them generated: clippy's backtick rule for API
-// docs does not fit them.
-#[allow(clippy::doc_markdown)]
+// docs does not fit them, and brackets in them are text, not links. The
+// first release's changelog says `[EUR]`, a currency, which rustdoc
+// otherwise reads as a broken link and fails the doc build.
+#[allow(clippy::doc_markdown, rustdoc::broken_intra_doc_links)]
 pub mod _documentation {
     /// How every public item is tested: the examples in its documentation, and
     /// the tests that say they cover it.
