@@ -1,0 +1,230 @@
+{
+  "claims": {
+    "identity": {
+      "class": "archival",
+      "content": "pubunit 0.1.0 is released as v0.1.0 from commit 37b8fe39be6a0fa0379969abc81592b69d2cbc2a.",
+      "data": {
+        "columns": [
+          {
+            "name": "name"
+          },
+          {
+            "name": "version"
+          },
+          {
+            "name": "check"
+          },
+          {
+            "name": "expect"
+          },
+          {
+            "name": "tag"
+          },
+          {
+            "name": "commit"
+          }
+        ],
+        "rows": [
+          [
+            "pubunit",
+            "0.1.0",
+            "pubunit --version",
+            "pubunit 0.1.0",
+            "v0.1.0",
+            "37b8fe39be6a0fa0379969abc81592b69d2cbc2a"
+          ]
+        ]
+      },
+      "scope": "the published release v0.1.0 of pubunit",
+      "sources": [
+        {
+          "ref": "pubunit",
+          "revision": "37b8fe39be6a0fa0379969abc81592b69d2cbc2a"
+        }
+      ]
+    },
+    "release": {
+      "class": "archival",
+      "content": "pubunit 0.1.0 was released on 2026-10-12 from commit 37b8fe39be6a0fa0379969abc81592b69d2cbc2a with these changes.",
+      "data": {
+        "columns": [
+          {
+            "name": "category"
+          },
+          {
+            "name": "change"
+          }
+        ],
+        "rows": [
+          [
+            "added",
+            "pubunit: parse UCUM expressions into a public tree, and reduce them to a dimension and an exact rational factor, with UCUM's values read from the essence file the pinned ucum-units 0.1.0 bundles"
+          ],
+          [
+            "added",
+            "Exact conversion between commensurable units, temperatures with an offset included when they stand alone; special and arbitrary units are refused"
+          ],
+          [
+            "added",
+            "Base dimensions, units and quantity kinds declared as data, in a serde definitions format: {tray}, {batch}, [EUR] and {CO2e} are dimensions, and a unit is checked against its declared kind"
+          ],
+          [
+            "added",
+            "The pubunit command: parse, validate, reduce, convert, check, kinds and ucum"
+          ],
+          [
+            "added",
+            "The dimension algebra (Dimension, Reduced) and the parse tree (Term) are public, for symbolic computation"
+          ],
+          [
+            "internal",
+            "Brought pubunit to the Rust crate standard before its first release: TESTING.md and the doc-coverage guard, the _documentation module on docs.rs, test vectors from NIST SP 811 and the SI Brochure, property tests, a shorter README with the definitions format in the crate docs, Dimension::to_ucum for a valid UCUM form of a dimension, and this project's own cargo-vet audit of ucum-units 0.1.0 in place of its exemption"
+          ],
+          [
+            "internal",
+            "The _documentation module allows brackets in its prose, so a changelog that names [EUR] no longer fails the doc build"
+          ]
+        ]
+      },
+      "depends": [
+        "#identity"
+      ],
+      "scope": "the published release v0.1.0 of pubunit",
+      "sources": [
+        {
+          "ref": "pubunit",
+          "revision": "37b8fe39be6a0fa0379969abc81592b69d2cbc2a"
+        }
+      ]
+    },
+    "security": {
+      "class": "archival",
+      "content": "pubunit 0.1.0 passed these security checks before release on 2026-10-12.",
+      "data": {
+        "columns": [
+          {
+            "name": "kind"
+          },
+          {
+            "name": "name"
+          },
+          {
+            "name": "command"
+          },
+          {
+            "name": "tool"
+          },
+          {
+            "name": "result"
+          }
+        ],
+        "rows": [
+          [
+            "check",
+            "advisories, licences, bans and sources",
+            "cargo deny --locked check --hide-inclusion-graph",
+            "cargo-deny 0.20.2",
+            "advisories ok, bans ok, licenses ok, sources ok"
+          ],
+          [
+            "check",
+            "supply-chain audits",
+            "cargo vet --locked",
+            "cargo-vet 0.10.2",
+            "Vetting Succeeded (35 fully audited, 2 partially audited, 16 exempted)"
+          ],
+          [
+            "check",
+            "supply-chain report current",
+            ".venv/bin/pubkit supply-chain --check pubunit",
+            "pubkit 0.5.0",
+            "SUPPLY-CHAIN.md current for pubunit"
+          ],
+          [
+            "check",
+            "UCUM table matches the pinned ucum-units",
+            "python3 tools/gen-ucum-table.py --check",
+            "ucum-units v0.1.0",
+            "ucum-table: current"
+          ],
+          [
+            "fact",
+            "RustSec advisory database revision",
+            "git -C \"$(ls -d ~/.cargo/advisory-dbs/advisory-db-*/ | head -1)\" log -1 --format='%H (%cs)'",
+            "",
+            "57dcc0f2192e025138907a495c1ac9a7e1e3e123 (2026-10-12)"
+          ],
+          [
+            "fact",
+            "audits imported from",
+            "grep -o '^\\[imports\\.[a-z-]*' supply-chain/config.toml | cut -d. -f2 | paste -sd, - | sed 's/,/, /g'",
+            "",
+            "bytecode-alliance, embark-studios, google, isrg, mozilla, zcash"
+          ]
+        ]
+      },
+      "depends": [
+        "#identity"
+      ],
+      "scope": "the published release v0.1.0 of pubunit",
+      "sources": [
+        {
+          "ref": "pubunit",
+          "revision": "37b8fe39be6a0fa0379969abc81592b69d2cbc2a"
+        }
+      ]
+    },
+    "summary": {
+      "class": "archival",
+      "content": "pubunit 0.1.0 in brief: pubunit's first release: exact, kind-aware checking and conversion of UCUM units, built on ucum-units, with trays, currencies and CO2 equivalents declared as base dimensions and quantity kinds checked by declaration, never inferred.",
+      "depends": [
+        "#release"
+      ],
+      "scope": "the published release v0.1.0 of pubunit",
+      "sources": [
+        {
+          "ref": "pubunit",
+          "revision": "37b8fe39be6a0fa0379969abc81592b69d2cbc2a"
+        }
+      ]
+    }
+  },
+  "created": "2026-10-12T00:00:00Z",
+  "sections": [
+    {
+      "heading": "Summary",
+      "items": [
+        {
+          "ref": "#summary"
+        }
+      ]
+    },
+    {
+      "heading": "Identity",
+      "items": [
+        {
+          "ref": "#identity"
+        }
+      ]
+    },
+    {
+      "heading": "Release",
+      "items": [
+        {
+          "ref": "#release"
+        }
+      ]
+    },
+    {
+      "heading": "Security",
+      "items": [
+        {
+          "ref": "#security"
+        }
+      ]
+    }
+  ],
+  "slug": "pkg.pubunit",
+  "tag": "PKG-PUBUNT-10-2026",
+  "title": "pubunit"
+}
