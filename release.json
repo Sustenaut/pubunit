@@ -17,6 +17,7 @@
     "check": "pubunit --version"
   },
   "install": "cargo install --locked pubunit --version {version}, or cargo add pubunit@{version}",
+  "key": "pub:sha2-256:cfyhgq3juyzcna7g7co4zchwci4q2l637xieal733ft6sje3dftq",
   "semver-checks": true,
   "security": {
     "checks": [
