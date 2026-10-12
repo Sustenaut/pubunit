@@ -1,0 +1,35 @@
+pubunit
+=======
+
+Copyright 2026 the pubunit authors. Licensed under the Apache
+License, Version 2.0 (see LICENSE).
+
+
+UCUM
+----
+
+src/ucum_table.rs is generated from ucum-essence.xml, the machine-readable
+table of the Unified Code for Units of Measure, as bundled verbatim in the
+ucum-units crate (version 0.1.0). It holds UCUM's prefix and unit codes, and
+their values and definitions as UCUM writes them.
+
+  Copyright 1999-2024 Regenstrief Institute, Inc. All rights reserved.
+  Licensed under the UCUM License, Version 1.1 (the "License"); you may
+  not use this file except in compliance with the License. You may obtain
+  a copy of the License at <https://unitsofmeasure.org/license>.
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+
+This product is not affiliated with, sponsored by, or endorsed by the
+Regenstrief Institute or the UCUM Organization.
+
+
+UCUM functional tests
+---------------------
+
+The functional suite reads UcumFunctionalTests.xml (copyright 2008-2021
+Grahame Grieve and contributors, under the Eclipse Public License 1.0) from
+the copy the ucum-units crate bundles. It is not copied into this repository
+and not distributed with pubunit.

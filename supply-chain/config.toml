@@ -1,0 +1,38 @@
+
+# cargo-vet config file
+
+[cargo-vet]
+version = "0.10"
+
+[imports.bytecode-alliance]
+url = "https://raw.githubusercontent.com/bytecodealliance/wasmtime/main/supply-chain/audits.toml"
+
+[imports.embark-studios]
+url = "https://raw.githubusercontent.com/EmbarkStudios/rust-ecosystem/main/audits.toml"
+
+[imports.google]
+url = "https://raw.githubusercontent.com/google/supply-chain/main/audits.toml"
+
+[imports.isrg]
+url = "https://raw.githubusercontent.com/divviup/libprio-rs/main/supply-chain/audits.toml"
+
+[imports.mozilla]
+url = "https://raw.githubusercontent.com/mozilla/supply-chain/main/audits.toml"
+
+[imports.zcash]
+url = "https://raw.githubusercontent.com/zcash/rust-ecosystem/main/supply-chain/audits.toml"
+
+[[exemptions.memchr]]
+version = "2.8.3"
+criteria = "safe-to-deploy"
+notes = "No full audit in the imported sets as of 2026-10-12; Zcash's safe-to-deploy deltas reach 2.7.5, as pubrel records for the same version. Reached through serde_json, and through roxmltree at build time."
+
+[[exemptions.roxmltree]]
+version = "0.21.1"
+criteria = "safe-to-deploy"
+notes = "Build-time only: ucum-units' build script reads its bundled ucum-essence.xml with it; nothing of it is linked into pubunit. No audit in the imported sets as of 2026-10-12. It forbids unsafe code (#![forbid(unsafe_code)] in src/lib.rs, read 2026-10-12)."
+
+[[exemptions.ucum-units]]
+version = "0.1.0"
+criteria = "safe-to-deploy"
+notes = "Pinned exactly (=0.1.0 in Cargo.toml). Its only release, published 2026-06-03 by Bas-Hulo; crates.io owners Bas-Hulo, maarten-hulo and the hulo-ai maintainers team (checked 2026-10-12); MIT; no audit in any imported set as of 2026-10-12. Read for this exemption on 2026-10-12: 1,768 lines of src/ under #![forbid(unsafe_code)], one runtime dependency (thiserror), and a 135-line build script that reads its vendored ucum-essence.xml and writes a table. Its vendored data carries its own licences: ucum-essence.xml under the UCUM licence 1.1, and UcumFunctionalTests.xml under the Eclipse Public License 1.0, which pubunit reads in its tests and does not redistribute."
