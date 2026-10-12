@@ -1057,7 +1057,7 @@ fn overflow() -> Error {
 mod tests {
     use super::*;
 
-    // covers: registry::Registry::reduce
+    // covers: Registry::reduce
     // Found while timing reduction: `[pi]64` written 120 times grew factors
     // to half a million digits, normalised by a gcd at every step, and ran
     // for minutes. A factor is now bounded by MAX_FACTOR_BITS.

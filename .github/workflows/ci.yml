@@ -12,20 +12,22 @@ on:
 jobs:
   # pubkit's shared Rust CI, with pubunit's own gates and checks named:
   #
-  # - gates: the no-float guard and the UCUM table check beside fmt, clippy,
-  #   docs and packaging -- cheap, so they fail fast before the matrix.
+  # - gates: the no-float guard, the UCUM table check and the doc-coverage
+  #   guard beside fmt, clippy, docs and packaging -- cheap, so they fail
+  #   fast before the matrix.
   # - test: exact results must be the same everywhere, so the tests run on
   #   Linux, macOS and Windows, and on a 32-bit and a big-endian machine.
   # - functional: the Gherkin suite, with UCUM's functional tests, then the
-  #   supply-chain report, which must be committed up to date.
+  #   test vectors and the supply-chain report, which must be committed up
+  #   to date.
   # - msrv: a build on the oldest Rust pubunit promises, its rust-version.
   # - fuzz: the parser, reduction and the definitions reader, after
   #   replaying every input that once found a bug (fuzz/regressions/).
   ci:
     uses: schryer/pubkit/.github/workflows/rust-ci.yml@v0.5.0
     with:
-      gates: fmt-check guard-floats ucum-table-check lint doc publish-check
-      functional: functional supply-chain-check
+      gates: fmt-check guard-floats ucum-table-check lint doc doc-coverage-check publish-check
+      functional: functional vectors-check supply-chain-check
       msrv: true
       fuzz: true
       cross-targets: '["i686-unknown-linux-gnu", "s390x-unknown-linux-gnu"]'

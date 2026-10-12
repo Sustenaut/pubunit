@@ -69,7 +69,7 @@ fn compare(reg: &Registry, expr: &str) -> Option<String> {
     }
 }
 
-// covers: registry::Registry::reduce
+// covers: Registry::reduce, Registry::ucum_atoms
 #[test]
 fn every_atom_agrees_with_ucum_units() {
     let reg = Registry::ucum().with_annotations(Annotations::Ucum);
@@ -89,7 +89,7 @@ fn every_atom_agrees_with_ucum_units() {
     );
 }
 
-// covers: registry::Registry::reduce
+// covers: Registry::reduce, Registry::ucum_atoms
 #[test]
 fn every_prefixed_atom_agrees_with_ucum_units() {
     let reg = Registry::ucum().with_annotations(Annotations::Ucum);
@@ -116,7 +116,7 @@ fn every_prefixed_atom_agrees_with_ucum_units() {
     );
 }
 
-// covers: registry::Registry::reduce
+// covers: Registry::reduce, Registry::ucum_atoms
 #[test]
 fn compound_expressions_agree_with_ucum_units() {
     let reg = Registry::ucum().with_annotations(Annotations::Ucum);

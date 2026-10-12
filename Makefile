@@ -10,9 +10,9 @@ include pubkit.mk
 export PUBUNIT_BIN_DIR ?= $(CURDIR)/target/debug
 
 .DEFAULT_GOAL := help
-.PHONY: check clean guard-floats ucum-table ucum-table-check fuzz-smoke deny vet publish-check msrv
+.PHONY: check clean guard-floats ucum-table ucum-table-check vectors vectors-check doc-coverage doc-coverage-check fuzz-smoke deny vet publish-check msrv
 
-check: sync-check fmt-check guard-floats ucum-table-check lint test doc functional publish-check supply-chain-check vet deny ## Everything CI runs
+check: sync-check fmt-check guard-floats ucum-table-check lint test doc doc-coverage-check functional vectors-check publish-check supply-chain-check vet deny ## Everything CI runs
 
 clean: ## Remove build artifacts
 	cargo clean
@@ -26,6 +26,18 @@ ucum-table: ## Regenerate src/ucum_table.rs from the essence file ucum-units bun
 
 ucum-table-check: ## Fail if src/ucum_table.rs differs from the pinned ucum-units' essence file
 	python3 tools/gen-ucum-table.py --check
+
+vectors: ## Regenerate testdata/ from independent sources (NIST SP 811, the SI Brochure)
+	python3 tools/vectors/generate.py
+
+vectors-check: vectors ## Fail if the committed test vectors differ from what the sources give
+	git diff --exit-code -- testdata
+
+doc-coverage: ## Regenerate TESTING.md
+	python3 tools/doc-coverage.py
+
+doc-coverage-check: ## Fail if a public function has no example, a test covers no real item, or TESTING.md is stale
+	python3 tools/doc-coverage.py --check
 
 # What pubunit reads from outside: expressions and definitions (fuzz/).
 FUZZ_TARGETS := parse reduce definitions

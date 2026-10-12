@@ -12,7 +12,7 @@ readme = "README.md"
 keywords = ["ucum", "units", "dimensional-analysis", "quantity-kind", "publet"]
 categories = ["science", "parser-implementations", "command-line-utilities"]
 # Anchored with /: like gitignore patterns, a bare name matches at any depth.
-include = ["/src/**/*.rs", "/README.md", "/CHANGELOG.md", "/LICENSE", "/NOTICE", "/SECURITY.md", "/SUPPLY-CHAIN.md"]
+include = ["/src/**/*.rs", "/README.md", "/CHANGELOG.md", "/LICENSE", "/NOTICE", "/SECURITY.md", "/SUPPLY-CHAIN.md", "/TESTING.md"]
 
 [package.metadata.docs.rs]
 all-features = true
@@ -28,7 +28,8 @@ path = "src/main.rs"
 
 [dependencies]
 # UCUM's grammar and atom table, conformance-tested. Pinned exactly: a
-# single release, June 2026, by a small team (SUPPLY-CHAIN.md, supply-chain/).
+# single release, June 2026, by a small team, audited for this version
+# (supply-chain/audits.toml).
 ucum-units = "=0.1.0"
 # Exact rationals for conversion factors: no floating point anywhere.
 num-bigint = "0.5"
@@ -37,6 +38,11 @@ num-traits = "0.2"
 # The definitions format.
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+
+[dev-dependencies]
+# Property tests: invariants of the arithmetic and the grammar over many
+# inputs (tests/properties.rs).
+proptest = "1"
 
 [profile.release]
 overflow-checks = true

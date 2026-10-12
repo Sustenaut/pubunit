@@ -1,0 +1,226 @@
+{
+  "description": "SI derived units: their dimension in UCUM's base units, and how many base units one is.",
+  "source": "SI Brochure, 9th edition (2019), Table 4, translated to UCUM's base units by kg = 1000 g and A = C/s.",
+  "cases": [
+    {
+      "unit": "Hz",
+      "si": {
+        "s": -1
+      },
+      "dimension": {
+        "s": -1
+      },
+      "factor": "1"
+    },
+    {
+      "unit": "N",
+      "si": {
+        "kg": 1,
+        "m": 1,
+        "s": -2
+      },
+      "dimension": {
+        "g": 1,
+        "m": 1,
+        "s": -2
+      },
+      "factor": "1000"
+    },
+    {
+      "unit": "Pa",
+      "si": {
+        "kg": 1,
+        "m": -1,
+        "s": -2
+      },
+      "dimension": {
+        "g": 1,
+        "m": -1,
+        "s": -2
+      },
+      "factor": "1000"
+    },
+    {
+      "unit": "J",
+      "si": {
+        "kg": 1,
+        "m": 2,
+        "s": -2
+      },
+      "dimension": {
+        "g": 1,
+        "m": 2,
+        "s": -2
+      },
+      "factor": "1000"
+    },
+    {
+      "unit": "W",
+      "si": {
+        "kg": 1,
+        "m": 2,
+        "s": -3
+      },
+      "dimension": {
+        "g": 1,
+        "m": 2,
+        "s": -3
+      },
+      "factor": "1000"
+    },
+    {
+      "unit": "C",
+      "si": {
+        "A": 1,
+        "s": 1
+      },
+      "dimension": {
+        "C": 1
+      },
+      "factor": "1"
+    },
+    {
+      "unit": "V",
+      "si": {
+        "kg": 1,
+        "m": 2,
+        "s": -3,
+        "A": -1
+      },
+      "dimension": {
+        "C": -1,
+        "g": 1,
+        "m": 2,
+        "s": -2
+      },
+      "factor": "1000"
+    },
+    {
+      "unit": "F",
+      "si": {
+        "kg": -1,
+        "m": -2,
+        "s": 4,
+        "A": 2
+      },
+      "dimension": {
+        "C": 2,
+        "g": -1,
+        "m": -2,
+        "s": 2
+      },
+      "factor": "1/1000"
+    },
+    {
+      "unit": "Ohm",
+      "si": {
+        "kg": 1,
+        "m": 2,
+        "s": -3,
+        "A": -2
+      },
+      "dimension": {
+        "C": -2,
+        "g": 1,
+        "m": 2,
+        "s": -1
+      },
+      "factor": "1000"
+    },
+    {
+      "unit": "S",
+      "si": {
+        "kg": -1,
+        "m": -2,
+        "s": 3,
+        "A": 2
+      },
+      "dimension": {
+        "C": 2,
+        "g": -1,
+        "m": -2,
+        "s": 1
+      },
+      "factor": "1/1000"
+    },
+    {
+      "unit": "Wb",
+      "si": {
+        "kg": 1,
+        "m": 2,
+        "s": -2,
+        "A": -1
+      },
+      "dimension": {
+        "C": -1,
+        "g": 1,
+        "m": 2,
+        "s": -1
+      },
+      "factor": "1000"
+    },
+    {
+      "unit": "T",
+      "si": {
+        "kg": 1,
+        "s": -2,
+        "A": -1
+      },
+      "dimension": {
+        "C": -1,
+        "g": 1,
+        "s": -1
+      },
+      "factor": "1000"
+    },
+    {
+      "unit": "H",
+      "si": {
+        "kg": 1,
+        "m": 2,
+        "s": -2,
+        "A": -2
+      },
+      "dimension": {
+        "C": -2,
+        "g": 1,
+        "m": 2
+      },
+      "factor": "1000"
+    },
+    {
+      "unit": "Gy",
+      "si": {
+        "m": 2,
+        "s": -2
+      },
+      "dimension": {
+        "m": 2,
+        "s": -2
+      },
+      "factor": "1"
+    },
+    {
+      "unit": "Sv",
+      "si": {
+        "m": 2,
+        "s": -2
+      },
+      "dimension": {
+        "m": 2,
+        "s": -2
+      },
+      "factor": "1"
+    },
+    {
+      "unit": "Bq",
+      "si": {
+        "s": -1
+      },
+      "dimension": {
+        "s": -1
+      },
+      "factor": "1"
+    }
+  ]
+}

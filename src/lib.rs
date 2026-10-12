@@ -46,16 +46,77 @@ The invariants it keeps:
 - **Kinds are declared, never inferred.** Energy and torque share the
   dimension `m2.s-2.g`; only a declaration says which a column measures.
 - **Nothing ucum-units refuses is accepted.** Every expression a registry
-  reads is also read by [ucum-units], which passes UCUM's conformance
-  suite, with declared atoms stood in for by an annotation.
+  reads is also read by [ucum-units], with declared atoms stood in for by
+  an annotation.
 - **Inputs are bounded.** An expression is at most [`MAX_LEN`] bytes,
   [`MAX_DEPTH`] levels deep, with exponents within ±[`MAX_EXPONENT`], and
   a factor's numerator and denominator within [`MAX_FACTOR_BITS`] bits.
 
-This page goes on with [examples](#example-a-currency), [why this
-crate](#why-this-crate), [related crates](#related-crates), [crate
-features](#crate-features), [the minimum Rust version](#minimum-rust-version)
-and [versioning](#versioning).
+The rest of this page:
+
+* [The definitions format](#the-definitions-format): declaring dimensions,
+  units and kinds as data.
+* [Examples](#example-a-currency): a short cookbook, failures included.
+* [What this version does not do](#what-this-version-does-not-do).
+* [Why this crate?](#why-this-crate) and [related crates](#related-crates).
+* [Crate features](#crate-features), [minimum Rust
+  version](#minimum-rust-version) and [versioning](#versioning).
+
+Longer documents live in [`_documentation`]: how every item is
+[tested](crate::_documentation::testing), how each dependency is
+[vouched for](crate::_documentation::supply_chain), the project's
+[security](crate::_documentation::security) policy, and the
+[changelog](crate::_documentation::changelog). The `pubunit` command is
+described in its README and by `pubunit --help`.
+
+# The definitions format
+
+[`Definitions`] has three optional lists, read with serde (JSON with
+[`Definitions::from_json`]). A field the format does not define is refused.
+
+```json
+{
+  "dimensions": [
+    { "symbol": "{tray}", "name": "growing tray, 25 x 50 cm" },
+    { "symbol": "[EUR]",  "name": "euro (ISO 4217 EUR)" },
+    { "symbol": "{CO2e}", "name": "carbon dioxide equivalent" }
+  ],
+  "units": [
+    { "symbol": "{flat}", "name": "flat of six trays", "value": "6", "unit": "{tray}" }
+  ],
+  "kinds": [
+    { "name": "climate impact", "dimension": { "g": 1, "{CO2e}": 1 },
+      "units": ["g{CO2e}", "kg{CO2e}", "t{CO2e}"] }
+  ]
+}
+```
+
+- **`dimensions`** ([`BaseDimension`]): new base dimensions, each named by
+  the symbol of its unit. A symbol is one brace annotation (`{tray}`) or
+  one bracketed atom UCUM does not define (`[EUR]`). A brace symbol counts
+  wherever it appears. It may stand alone (`kW.h/{tray}`) or follow a unit:
+  `kg{CO2e}` is a kilogram of CO2 equivalent, of dimension `g.{CO2e}`.
+- **`units`** ([`UnitDefinition`]): one `symbol` is `value` times `unit`.
+  The value is a decimal or a fraction, greater than zero. The unit may use
+  UCUM, the declared dimensions, and the units declared before it, so there
+  are no cycles.
+- **`kinds`** ([`QuantityKind`]): a name, a dimension (base symbol to
+  exponent; mass is in grams, UCUM's base unit), and optionally the units
+  that may measure it, compared in normal form. Without `units`, any unit
+  of the dimension may.
+
+Each entry may carry an `id`, such as the content identifier of the publet
+that defines it. pubunit keeps it and does not read it, and does not depend
+on publet: an adapter in publet turns definition publets into this format.
+
+A brace annotation standing alone that nothing declares, such as a misspelt
+`{trays}`, is an error ([`Annotations::Strict`]). UCUM reads it as the
+number 1, which [`Annotations::Ucum`] asks for. An undeclared annotation
+after a unit (`g{basil}`) is a label, as in UCUM.
+
+Declare a counted thing as a dimension, not as an area. If `{tray}` were
+defined as 0.125 `m2`, then kW.h/{tray} would convert into kW.h/m2. A tray's
+area is a fact about trays, stated in a publet, not a unit conversion.
 
 # Example: a currency
 
@@ -134,6 +195,21 @@ assert_eq!(reg.reduce_term(&tree)?, reg.reduce("N")?);
 # Ok::<(), Box<dyn std::error::Error>>(())
 ```
 
+# What this version does not do
+
+- **Special units.** Logarithmic units (`dB`, `[pH]`, `Np`) have no linear
+  factor, and [`Registry::reduce`] and [`Registry::convert`] refuse them.
+  Temperatures with an offset (`Cel`, `[degF]`, `[degRe]`) convert when
+  they stand alone, and are refused inside a product. Arbitrary units
+  (`[IU]`) are commensurable with nothing.
+- **Case-insensitive UCUM** (`c/i`): only the case-sensitive form is read.
+- **Prefixes on declared units:** `k[EUR]` is not a unit.
+- **Kinds from QUDT:** kinds are declared by hand. A starting set
+  generated from QUDT, at build time, is planned.
+- **Checking derivations:** pubunit gives the dimension of a formula's
+  result (`kW.h/{tray}.kg{CO2e}/(kW.h)` is `g.{CO2e}.{tray}-1`). Checking a
+  method's declared input and output kinds against it is planned.
+
 # Why this crate?
 
 A unit library answers "do these units have the same dimension, and what
@@ -153,9 +229,9 @@ is the factor?". A publication that people check needs more:
 
 # Related crates
 
-Each was checked at the version given: ucum-units by reading its source and
-running it as the tests' oracle, the others from their crates.io metadata
-and documentation.
+Each was checked at the version given: ucum-units by reading all of its
+source, for the supply-chain audit, and running it as the tests' oracle;
+the others from their crates.io metadata and documentation only.
 
 | Crate | Version | How pubunit relates to it |
 |---|---|---|
@@ -207,6 +283,33 @@ pub use expr::{MAX_DEPTH, MAX_EXPONENT, MAX_LEN, Term, parse};
 pub use rational::{MAX_DECIMAL_EXPONENT, Rational};
 pub use registry::{Annotations, MAX_FACTOR_BITS, Reduced, Registry, UcumSource};
 
+/// Longer documents: testing, the supply chain, security, and the changelog.
+///
+/// These modules hold no code. Each is a document, kept in the repository as
+/// Markdown and rendered here so it is versioned with the crate.
+// Prose documents, some of them generated: clippy's backtick rule for API
+// docs does not fit them.
+#[allow(clippy::doc_markdown)]
+pub mod _documentation {
+    /// How every public item is tested: the examples in its documentation, and
+    /// the tests that say they cover it.
+    #[doc = include_str!("../TESTING.md")]
+    pub mod testing {}
+
+    /// Every crate this one depends on, and how its code is vouched for.
+    #[doc = include_str!("../SUPPLY-CHAIN.md")]
+    pub mod supply_chain {}
+
+    /// How to report a vulnerability, and what is checked before each release.
+    #[doc = include_str!("../SECURITY.md")]
+    pub mod security {}
+
+    /// Every release, newest first, generated from the package publet.
+    #[doc = include_str!("../CHANGELOG.md")]
+    pub mod changelog {}
+}
+
+/// The README's examples, run as tests without being rendered twice.
 #[cfg(doctest)]
 #[doc = include_str!("../README.md")]
 struct ReadmeDoctests;

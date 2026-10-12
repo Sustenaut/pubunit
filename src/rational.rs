@@ -401,7 +401,7 @@ mod tests {
         s.parse().unwrap_or_else(|_| Rational::zero())
     }
 
-    // covers: rational::Rational::from_str
+    // covers: Rational
     #[test]
     fn reads_ucum_value_forms() {
         assert_eq!(r("254e-2").to_string(), "2.54");
@@ -414,7 +414,7 @@ mod tests {
         assert_eq!(r("10/4").to_string(), "2.5");
     }
 
-    // covers: rational::Rational::from_str
+    // covers: Rational
     #[test]
     fn refuses_what_is_not_a_number() {
         for bad in [
@@ -424,7 +424,7 @@ mod tests {
         }
     }
 
-    // covers: rational::Rational::checked_pow
+    // covers: Rational::checked_pow, Rational::recip
     #[test]
     fn powers_and_inverse() {
         assert_eq!(r("2/3").checked_pow(2), Some(r("4/9")));
@@ -432,7 +432,7 @@ mod tests {
         assert_eq!(r("2/3").checked_pow(0), Some(Rational::one()));
     }
 
-    // covers: rational::Rational::cmp
+    // covers: Rational
     #[test]
     fn orders_by_value() {
         assert!(r("1/3") < r("0.34"));

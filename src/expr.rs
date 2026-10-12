@@ -381,7 +381,7 @@ mod tests {
         }
     }
 
-    // covers: expr::parse
+    // covers: parse
     #[test]
     fn exponents_split_from_symbols() {
         assert_eq!(parse("m2").ok(), Some(sym("m", 2)));
@@ -393,7 +393,7 @@ mod tests {
         assert_eq!(parse("B[10.nV]").ok(), Some(sym("B[10.nV]", 1)));
     }
 
-    // covers: expr::parse
+    // covers: parse
     #[test]
     fn left_associative() {
         let t = parse("kg/m.s").ok();
@@ -408,7 +408,7 @@ mod tests {
         );
     }
 
-    // covers: expr::parse
+    // covers: parse
     #[test]
     fn factors_and_annotations() {
         assert_eq!(
@@ -428,7 +428,7 @@ mod tests {
         );
     }
 
-    // covers: expr::parse
+    // covers: parse
     #[test]
     fn limits_hold() {
         assert!(matches!(parse("m65"), Err(Error::TooLarge { .. })));
@@ -445,7 +445,7 @@ mod tests {
         ));
     }
 
-    // covers: expr::parse
+    // covers: parse
     // Found by fuzzing (fuzz/regressions/parse/symbol-ending-in-digit and
     // symbol-ending-in-sign): the symbol `1+3` with exponent 3 printed as
     // `1+33`, and `1-` with exponent +3 as `1-3`, which read back as other
@@ -459,7 +459,7 @@ mod tests {
         assert!(parse("10*+3").is_ok());
     }
 
-    // covers: expr::Term::fmt
+    // covers: Term, parse
     // Found by fuzzing (fuzz/regressions/parse/nested-reciprocal):
     // `/(/@/s)` printed as `//@/s`, which does not parse, and `(/s).m`
     // printed as `/s.m`, which means 1/(s.m).
@@ -479,7 +479,7 @@ mod tests {
         }
     }
 
-    // covers: expr::parse
+    // covers: parse
     #[test]
     fn syntax_errors() {
         for bad in [

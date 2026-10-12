@@ -1,0 +1,223 @@
+{
+  "description": "Values converted exactly between units with exact definitions.",
+  "source": "NIST SP 811 (2008), Appendix B, exact factors; the temperature scales by their definitions (K = °C + 273.15, °F = °C × 9/5 + 32).",
+  "cases": [
+    {
+      "name": "inch to centimetre",
+      "value": "1",
+      "from": "[in_i]",
+      "to": "cm",
+      "result": "127/50"
+    },
+    {
+      "name": "foot to metre",
+      "value": "1",
+      "from": "[ft_i]",
+      "to": "m",
+      "result": "381/1250"
+    },
+    {
+      "name": "yard to foot",
+      "value": "1",
+      "from": "[yd_i]",
+      "to": "[ft_i]",
+      "result": "3"
+    },
+    {
+      "name": "foot to yard",
+      "value": "1",
+      "from": "[ft_i]",
+      "to": "[yd_i]",
+      "result": "1/3"
+    },
+    {
+      "name": "mile to kilometre",
+      "value": "1",
+      "from": "[mi_i]",
+      "to": "km",
+      "result": "25146/15625"
+    },
+    {
+      "name": "nautical mile to mile",
+      "value": "1",
+      "from": "[nmi_i]",
+      "to": "[mi_i]",
+      "result": "57875/50292"
+    },
+    {
+      "name": "pound to kilogram",
+      "value": "1",
+      "from": "[lb_av]",
+      "to": "kg",
+      "result": "45359237/100000000"
+    },
+    {
+      "name": "ounce to gram",
+      "value": "1",
+      "from": "[oz_av]",
+      "to": "g",
+      "result": "45359237/1600000"
+    },
+    {
+      "name": "kilogram to pound",
+      "value": "1",
+      "from": "kg",
+      "to": "[lb_av]",
+      "result": "100000000/45359237"
+    },
+    {
+      "name": "US gallon to litre",
+      "value": "1",
+      "from": "[gal_us]",
+      "to": "L",
+      "result": "473176473/125000000"
+    },
+    {
+      "name": "US fluid ounce to millilitre",
+      "value": "1",
+      "from": "[foz_us]",
+      "to": "mL",
+      "result": "473176473/16000000"
+    },
+    {
+      "name": "cubic inch to millilitre",
+      "value": "1",
+      "from": "[in_i]3",
+      "to": "mL",
+      "result": "2048383/125000"
+    },
+    {
+      "name": "day to hour",
+      "value": "1",
+      "from": "d",
+      "to": "h",
+      "result": "24"
+    },
+    {
+      "name": "kilowatt hour to megajoule",
+      "value": "1",
+      "from": "kW.h",
+      "to": "MJ",
+      "result": "18/5"
+    },
+    {
+      "name": "calorie to joule",
+      "value": "1",
+      "from": "cal",
+      "to": "J",
+      "result": "523/125"
+    },
+    {
+      "name": "kilocalorie to kilowatt hour",
+      "value": "1",
+      "from": "kcal",
+      "to": "kW.h",
+      "result": "523/450000"
+    },
+    {
+      "name": "standard atmosphere to kilopascal",
+      "value": "1",
+      "from": "atm",
+      "to": "kPa",
+      "result": "4053/40"
+    },
+    {
+      "name": "bar to standard atmosphere",
+      "value": "1",
+      "from": "bar",
+      "to": "atm",
+      "result": "4000/4053"
+    },
+    {
+      "name": "pound-force per square inch to pascal",
+      "value": "1",
+      "from": "[psi]",
+      "to": "Pa",
+      "result": "8896443230521/1290320000"
+    },
+    {
+      "name": "pound-force to newton",
+      "value": "1",
+      "from": "[lbf_av]",
+      "to": "N",
+      "result": "8896443230521/2000000000000"
+    },
+    {
+      "name": "standard gravity to metre per second squared",
+      "value": "1",
+      "from": "[g]",
+      "to": "m/s2",
+      "result": "196133/20000"
+    },
+    {
+      "name": "mile per hour to metre per second",
+      "value": "1",
+      "from": "[mi_i]/h",
+      "to": "m/s",
+      "result": "1397/3125"
+    },
+    {
+      "name": "kilometre per hour to metre per second",
+      "value": "1",
+      "from": "km/h",
+      "to": "m/s",
+      "result": "5/18"
+    },
+    {
+      "name": "gram per US gallon to milligram per litre",
+      "value": "1",
+      "from": "g/[gal_us]",
+      "to": "mg/L",
+      "result": "125000000000/473176473"
+    },
+    {
+      "name": "pound per square foot to kilogram per square metre",
+      "value": "1",
+      "from": "[lb_av]/[ft_i]2",
+      "to": "kg/m2",
+      "result": "45359237/9290304"
+    },
+    {
+      "name": "watt hour per square foot to watt hour per square metre",
+      "value": "1",
+      "from": "W.h/[ft_i]2",
+      "to": "W.h/m2",
+      "result": "1562500/145161"
+    },
+    {
+      "name": "body temperature, Fahrenheit to Celsius",
+      "value": "493/5",
+      "from": "[degF]",
+      "to": "Cel",
+      "result": "37"
+    },
+    {
+      "name": "minus forty, Celsius to Fahrenheit",
+      "value": "-40",
+      "from": "Cel",
+      "to": "[degF]",
+      "result": "-40"
+    },
+    {
+      "name": "absolute zero in Celsius",
+      "value": "0",
+      "from": "K",
+      "to": "Cel",
+      "result": "-5463/20"
+    },
+    {
+      "name": "freezing point in kelvin",
+      "value": "32",
+      "from": "[degF]",
+      "to": "K",
+      "result": "5463/20"
+    },
+    {
+      "name": "grow room, Celsius to Fahrenheit",
+      "value": "43/2",
+      "from": "Cel",
+      "to": "[degF]",
+      "result": "707/10"
+    }
+  ]
+}
