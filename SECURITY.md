@@ -26,7 +26,9 @@ never a panic, a hang, or an allocation out of proportion to the input.
   (`MAX_EXPONENT`). A dimension's exponents on UCUM's base units stay within
   ±127, as in ucum-units.
 - A decimal's exponent is within ±1000 (`MAX_DECIMAL_EXPONENT`), so `1e999999`
-  cannot ask for a huge number.
+  cannot ask for a huge number, and a reduced factor's numerator and
+  denominator stay within 8192 bits (`MAX_FACTOR_BITS`), so exact arithmetic
+  stays fast. The command rounds to at most 1000 places.
 - Every result is computed exactly, with rationals, so it cannot depend on
   floating-point rounding. No floating-point type appears in `src/`.
 - Declarations cannot redefine a UCUM atom or one another, and units are
@@ -86,6 +88,9 @@ a parsed expression back as text. `1+3+3` and `1-+3` read as symbols ending
 in a digit or a sign, which printed as other expressions; such symbols are
 now refused, as no UCUM atom has one. A reciprocal lost its parentheses:
 `(/s).m` printed as `/s.m`, which means 1/(s.m). Each has a regression test.
+Timing reduction found a fourth: `[pi]64` written 120 times, under 1 KB,
+grew factors to half a million digits and ran for minutes. Factors are now
+bounded, with a regression test that it is refused in under two seconds.
 
 **In the code:** `unsafe` is forbidden (`unsafe_code = "forbid"` in
 `Cargo.toml`). Release builds keep integer overflow checks

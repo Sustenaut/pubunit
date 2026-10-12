@@ -28,7 +28,8 @@ options:
   --annotations=strict|ucum  an undeclared {annotation} standing alone is an
                              error (strict, the default) or 1 (ucum)
   --kind KIND                convert: both units must measure KIND
-  --places N                 convert: round to N decimal places, halves to even
+  --places N                 convert: round to N decimal places (at most
+                             1000), halves to even
   -h, --help                 print this help
   --version                  print the version
 
@@ -53,6 +54,9 @@ fn main() -> ExitCode {
     }
 }
 
+/// The most decimal places `--places` gives: rounding computes 10^places.
+const MAX_PLACES: u32 = 1000;
+
 #[derive(Default)]
 struct Options {
     defs: Option<String>,
@@ -76,10 +80,13 @@ fn options(args: &[String]) -> Result<Options, String> {
             "--kind" => o.kind = Some(value("--kind")?),
             "--places" => {
                 let v = value("--places")?;
-                o.places = Some(
-                    v.parse()
-                        .map_err(|_| format!("--places {v}: not a count"))?,
-                );
+                let places: u32 = v
+                    .parse()
+                    .map_err(|_| format!("--places {v}: not a count"))?;
+                if places > MAX_PLACES {
+                    return Err(format!("--places {v}: at most {MAX_PLACES}"));
+                }
+                o.places = Some(places);
             }
             "--annotations=strict" => o.annotations = Annotations::Strict,
             "--annotations=ucum" => o.annotations = Annotations::Ucum,

@@ -106,6 +106,11 @@ impl Rational {
         Some(Rational { num, den })
     }
 
+    /// The size in bits of the larger of numerator and denominator.
+    pub(crate) fn bits(&self) -> u64 {
+        self.num.bits().max(self.den.bits())
+    }
+
     /// Whether this is zero.
     ///
     /// ```
@@ -213,7 +218,8 @@ impl Rational {
     }
 
     /// The decimal rounded to `places` digits after the point, halves to
-    /// even, with exactly that many digits.
+    /// even, with exactly that many digits. Time and memory grow with
+    /// `places`, so bound it when it comes from outside.
     ///
     /// ```
     /// use pubunit::Rational;

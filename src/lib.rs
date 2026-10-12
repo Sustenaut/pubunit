@@ -49,7 +49,8 @@ The invariants it keeps:
   reads is also read by [ucum-units], which passes UCUM's conformance
   suite, with declared atoms stood in for by an annotation.
 - **Inputs are bounded.** An expression is at most [`MAX_LEN`] bytes,
-  [`MAX_DEPTH`] levels deep, with exponents within ±[`MAX_EXPONENT`].
+  [`MAX_DEPTH`] levels deep, with exponents within ±[`MAX_EXPONENT`], and
+  a factor's numerator and denominator within [`MAX_FACTOR_BITS`] bits.
 
 This page goes on with [examples](#example-a-currency), [why this
 crate](#why-this-crate), [related crates](#related-crates), [crate
@@ -204,7 +205,7 @@ pub use dimension::{Dimension, UCUM_BASE_UNITS};
 pub use error::Error;
 pub use expr::{MAX_DEPTH, MAX_EXPONENT, MAX_LEN, Term, parse};
 pub use rational::{MAX_DECIMAL_EXPONENT, Rational};
-pub use registry::{Annotations, Reduced, Registry, UcumSource};
+pub use registry::{Annotations, MAX_FACTOR_BITS, Reduced, Registry, UcumSource};
 
 #[cfg(doctest)]
 #[doc = include_str!("../README.md")]

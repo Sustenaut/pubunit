@@ -33,3 +33,13 @@ Feature: Conversion is exact, and only between commensurable units
     When I run pubunit convert "1,5" "kg" "g"
     Then it fails
     And stderr mentions "not a number"
+
+  Scenario: Rounding is bounded
+    When I run pubunit convert "1" "m" "m" --places 1001
+    Then it fails
+    And stderr mentions "at most 1000"
+
+  Scenario: A huge factor is refused, not computed
+    When I run pubunit reduce "[pi]64.[pi]64.[pi]64.[pi]64.[pi]64.[pi]64.[pi]64.[pi]64"
+    Then it fails
+    And stderr mentions "too large"

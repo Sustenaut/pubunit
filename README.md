@@ -146,7 +146,7 @@ dimensions and kinds of publication 0.
 | `parse EXPR` | Prints the parse tree as JSON. |
 | `validate EXPR` | Checks that every symbol resolves. Special and arbitrary units pass. |
 | `reduce EXPR` | Prints `dimension: …` and `factor: …`, and `offset: …` for a temperature with an offset. |
-| `convert VALUE FROM TO` | Prints the converted value. `--kind KIND` holds both units to one kind. `--places N` rounds, halves to even. |
+| `convert VALUE FROM TO` | Prints the converted value. `--kind KIND` holds both units to one kind. `--places N` rounds, halves to even, to at most 1000 places. |
 | `check UNIT KIND` | Checks that `UNIT` measures the declared kind `KIND`. |
 | `kinds` | Lists the declared kinds: `name: dimension [units]`. |
 | `ucum` | Prints the UCUM version the atoms come from. |

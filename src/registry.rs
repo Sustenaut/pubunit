@@ -35,7 +35,8 @@ pub enum Annotations {
 /// [`checked_div`](Reduced::checked_div),
 /// [`checked_pow`](Reduced::checked_pow)) combines linear units exactly, as
 /// a formula carries units through. It returns `None` for a unit with an
-/// offset, whose products have no meaning, and on exponent overflow.
+/// offset, whose products have no meaning, on exponent overflow, and when a
+/// factor's numerator or denominator would exceed [`MAX_FACTOR_BITS`].
 ///
 /// ```
 /// let reg = pubunit::Registry::ucum();
@@ -122,8 +123,8 @@ impl Reduced {
         self.offset.is_zero()
     }
 
-    /// The product of two linear units. `None` if either has an offset or
-    /// an exponent overflows.
+    /// The product of two linear units. `None` if either has an offset, an
+    /// exponent overflows, or the factor would be too large.
     ///
     /// ```
     /// let reg = pubunit::Registry::ucum();
@@ -137,14 +138,15 @@ impl Reduced {
         if !self.is_linear() || !other.is_linear() {
             return None;
         }
+        fits(self.factor.bits() + other.factor.bits())?;
         Some(Reduced::new(
             self.dimension.checked_mul(&other.dimension)?,
             &self.factor * &other.factor,
         ))
     }
 
-    /// The quotient of two linear units. `None` if either has an offset or
-    /// an exponent overflows.
+    /// The quotient of two linear units. `None` if either has an offset, an
+    /// exponent overflows, or the factor would be too large.
     ///
     /// ```
     /// let reg = pubunit::Registry::ucum();
@@ -157,14 +159,15 @@ impl Reduced {
         if !self.is_linear() || !other.is_linear() {
             return None;
         }
+        fits(self.factor.bits() + other.factor.bits())?;
         Some(Reduced::new(
             self.dimension.checked_div(&other.dimension)?,
             self.factor.checked_div(&other.factor)?,
         ))
     }
 
-    /// The `n`th power of a linear unit. `None` if it has an offset or an
-    /// exponent overflows.
+    /// The `n`th power of a linear unit. `None` if it has an offset, an
+    /// exponent overflows, or the factor would be too large.
     ///
     /// ```
     /// let reg = pubunit::Registry::ucum();
@@ -176,6 +179,11 @@ impl Reduced {
         if !self.is_linear() {
             return None;
         }
+        fits(
+            self.factor
+                .bits()
+                .checked_mul(u64::from(n.unsigned_abs()))?,
+        )?;
         Some(Reduced::new(
             self.dimension.checked_pow(n)?,
             self.factor.checked_pow(n)?,
@@ -221,6 +229,19 @@ pub struct UcumSource {
     pub revision_date: &'static str,
     /// The ucum-units release whose essence file it is.
     pub ucum_units_version: &'static str,
+}
+
+/// The most bits a reduced factor's numerator or denominator may have:
+/// about 2,466 decimal digits.
+///
+/// Real units stay well inside it: `Ym64`, 10^1536 metres to the 64th, is
+/// about 5,100 bits. It keeps a short expression from making exact
+/// arithmetic slow: without it, `[pi]64` written 120 times, under 1 KB,
+/// took minutes.
+pub const MAX_FACTOR_BITS: u64 = 8192;
+
+fn fits(bits: u64) -> Option<()> {
+    (bits <= MAX_FACTOR_BITS).then_some(())
 }
 
 /// What an atom is, once resolved.
@@ -747,6 +768,9 @@ impl Registry {
             if !unit.is_linear() {
                 return Err(bad(format!("its unit `{}` has an offset", u.unit)));
             }
+            if value.bits() + unit.factor().bits() > MAX_FACTOR_BITS {
+                return Err(bad(format!("its factor is beyond {MAX_FACTOR_BITS} bits")));
+            }
             let factor = &value * unit.factor();
             self.insert_declared(&u.symbol, Reduced::new(unit.dimension, factor));
         }
@@ -1025,6 +1049,27 @@ impl Registry {
 
 fn overflow() -> Error {
     Error::TooLarge {
-        what: "an exponent beyond ±127".to_owned(),
+        what: format!("an exponent beyond ±127, or a factor beyond {MAX_FACTOR_BITS} bits"),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // covers: registry::Registry::reduce
+    // Found while timing reduction: `[pi]64` written 120 times grew factors
+    // to half a million digits, normalised by a gcd at every step, and ran
+    // for minutes. A factor is now bounded by MAX_FACTOR_BITS.
+    #[test]
+    fn a_huge_factor_is_refused_quickly() {
+        let reg = Registry::ucum();
+        let expr = vec!["[pi]64"; 120].join(".");
+        let start = std::time::Instant::now();
+        assert!(matches!(reg.reduce(&expr), Err(Error::TooLarge { .. })));
+        assert!(start.elapsed() < std::time::Duration::from_secs(2));
+        // Large but real factors still reduce.
+        assert!(reg.reduce("Ym64").is_ok());
+        assert!(reg.reduce("[pi]16").is_ok());
     }
 }
