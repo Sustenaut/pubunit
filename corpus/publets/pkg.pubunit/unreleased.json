@@ -1,30 +1,4 @@
 {
-  "changes": [
-    {
-      "category": "added",
-      "change": "pubunit: parse UCUM expressions into a public tree, and reduce them to a dimension and an exact rational factor, with UCUM's values read from the essence file the pinned ucum-units 0.1.0 bundles"
-    },
-    {
-      "category": "added",
-      "change": "Exact conversion between commensurable units, temperatures with an offset included when they stand alone; special and arbitrary units are refused"
-    },
-    {
-      "category": "added",
-      "change": "Base dimensions, units and quantity kinds declared as data, in a serde definitions format: {tray}, {batch}, [EUR] and {CO2e} are dimensions, and a unit is checked against its declared kind"
-    },
-    {
-      "category": "added",
-      "change": "The pubunit command: parse, validate, reduce, convert, check, kinds and ucum"
-    },
-    {
-      "category": "added",
-      "change": "The dimension algebra (Dimension, Reduced) and the parse tree (Term) are public, for symbolic computation"
-    },
-    {
-      "category": "internal",
-      "change": "Brought pubunit to the Rust crate standard before its first release: TESTING.md and the doc-coverage guard, the _documentation module on docs.rs, test vectors from NIST SP 811 and the SI Brochure, property tests, a shorter README with the definitions format in the crate docs, Dimension::to_ucum for a valid UCUM form of a dimension, and this project's own cargo-vet audit of ucum-units 0.1.0 in place of its exemption"
-    }
-  ],
-  "comment": "Changes not yet released. One row per change: category changed or removed (a published interface changed: major), added (a feature: minor), or fixed or security (patch). `pubrel add` appends one; `pubrel summary` sets the release's summary; `pubrel prepare` moves them into the package publet.",
-  "summary": "pubunit's first release: exact, kind-aware checking and conversion of UCUM units, built on ucum-units, with trays, currencies and CO2 equivalents declared as base dimensions and quantity kinds checked by declaration, never inferred."
+  "changes": [],
+  "comment": "Changes not yet released. One row per change: category changed or removed (a published interface changed: major), added (a feature: minor), or fixed or security (patch). `pubrel add` appends one; `pubrel summary` sets the release's summary; `pubrel prepare` moves them into the package publet."
 }
