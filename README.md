@@ -69,9 +69,9 @@ cargo install --locked pubunit
 `--defs FILE` reads definitions (the format is in the crate documentation),
 and `--annotations=strict|ucum` says how an undeclared `{annotation}` standing
 alone is read. The exit status is 0 on success and 1 on any failure, with the
-reason on stderr. The commands, options, exit status, the output of
-`reduce`, `convert` and `parse`, and the definitions format are versioned
-like the library API.
+reason on stderr. The commands, options and exit status, the output of
+every command, and the definitions format are versioned like the library
+API.
 
 ```sh
 $ pubunit convert 1 '[ft_i]' '[yd_i]'

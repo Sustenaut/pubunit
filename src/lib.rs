@@ -41,13 +41,14 @@ assert!(reg.check_kind("kg/{tray}", "climate impact per tray").is_err());
 The invariants it keeps:
 
 - **No floating point.** Factors are read from UCUM's own decimal strings
-  as rationals, and every result is exact. (No floating-point type appears in
-  the source; a guard checks.)
+  as rationals, and every result is exact. No floating-point type appears in
+  the source, and a guard checks that.
 - **Kinds are declared, never inferred.** Energy and torque share the
-  dimension `m2.s-2.g`; only a declaration says which a column measures.
+  dimension `m2.s-2.g`. Only a declaration says which a column measures.
 - **Nothing ucum-units refuses is accepted.** Every expression a registry
-  reads is also read by [ucum-units], with declared atoms stood in for by
-  an annotation.
+  reads from text is also read by [ucum-units], with declared atoms stood in
+  for by an annotation. A tree built in code and given to
+  [`Registry::reduce_term`] is not.
 - **Inputs are bounded.** An expression is at most [`MAX_LEN`] bytes,
   [`MAX_DEPTH`] levels deep, with exponents within ±[`MAX_EXPONENT`], and
   a factor's numerator and denominator within [`MAX_FACTOR_BITS`] bits.
@@ -229,19 +230,24 @@ is the factor?". A publication that people check needs more:
 
 # Related crates
 
-Each was checked at the version given: ucum-units by reading all of its
-source, for the supply-chain audit, and running it as the tests' oracle;
-the others from their crates.io metadata and documentation only.
+Each was checked at the version given. ucum-units was read in full for the
+supply-chain audit (an AI review, as `supply-chain/audits.toml` says) and is
+run as the tests' oracle. octofhir-ucum was run on the inputs below. uom was
+checked from its documentation only.
 
 | Crate | Version | How pubunit relates to it |
 |---|---|---|
 | [ucum-units] | 0.1.0 | **Built on.** It reads every expression, so pubunit accepts nothing it refuses. Its essence file is the source of pubunit's atom table. Its README reports passing UCUM's conformance cases, and pubunit's own suite runs the validation and conversion cases. Its factors are floating point and its parse tree is private, so pubunit has its own exact layer and tree. |
-| [octofhir-ucum] | 0.6.1 | Made for `FHIRPath`, with a heavier dependency tree (`regex`, `phf`, `rust_decimal`). A fallback parser if ucum-units stalls. |
+| [octofhir-ucum] | 0.6.1 | Made for `FHIRPath`, with a heavier dependency tree (`regex`, `phf`, `rust_decimal`). Its factors are `rust_decimal` values, but they pass through floating point: run on 2026-10-12, it gave `[ft_i]` as 0.3048000000000000153654866608 and `[ft_i]`/`[yd_i]` as 0.3333333333333333535692443976, where pubunit gives 0.3048 and 1/3. |
 | [uom] | 0.38.0 | Units checked at compile time, for Rust code. Publication units arrive at run time. |
 
-`wise_units`, which an earlier plan named as a test oracle, is no longer on
-crates.io or GitHub. The tests compare pubunit with ucum-units' own floating-point
-factors instead, for every atom and prefix.
+`wise_units`, which an earlier plan named as a test oracle, is not on
+crates.io, and its GitHub repositories return 404. The tests compare pubunit
+with ucum-units' own floating-point factors instead, for every atom and
+prefix. That oracle shares pubunit's source table, the essence file, so it
+checks parsing and arithmetic, not UCUM's values. The values are checked
+against NIST SP 811 and the SI Brochure (`testdata/`) and against UCUM's own
+functional tests.
 
 # Crate features
 
@@ -258,7 +264,9 @@ that bumps only the third.
 pubunit follows Cargo's convention: below 1.0, a breaking change bumps the
 second number (`0.y.z`) and anything else the third. Each change is recorded
 with [pubrel] as it lands, and the changelog is generated from the package
-publet `pkg.pubunit`.
+publet `pkg.pubunit`. The public API is checked against the last release by
+cargo-semver-checks, through pubrel, so a break recorded as anything less
+fails CI.
 
 [UCUM]: https://ucum.org/ucum
 [ucum-units]: https://crates.io/crates/ucum-units

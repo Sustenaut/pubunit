@@ -169,7 +169,9 @@ impl Rational {
     }
 
     /// This raised to the integer power `exp`, or `None` for zero to a
-    /// negative power.
+    /// negative power. The result's size grows with `exp`, so bound it when
+    /// it comes from outside, as [`Reduced`](crate::Reduced) does with
+    /// [`MAX_FACTOR_BITS`](crate::MAX_FACTOR_BITS).
     ///
     /// ```
     /// use pubunit::Rational;

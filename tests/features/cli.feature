@@ -13,6 +13,11 @@ Feature: The command line
     And it prints "convert VALUE FROM TO"
     And it prints "check UNIT KIND"
 
+  Scenario: --help works after a command too
+    When I run pubunit convert --help
+    Then it succeeds
+    And it prints "convert VALUE FROM TO"
+
   Scenario: An unknown command fails with the usage
     When I run pubunit frobnicate
     Then it fails

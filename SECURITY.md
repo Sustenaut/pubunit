@@ -56,8 +56,8 @@ never a panic, a hang, or an allocation out of proportion to the input.
 - a build on the minimum Rust version;
 - the Gherkin suite, which runs the built binary, with UCUM's own functional
   tests;
-- fuzzing of the parser, reduction and conversion, and the definitions
-  reader (`fuzz/`), after replaying every input that once found a bug
+- fuzzing of the parser, reduction and conversion, the number reader, and
+  the definitions reader (`fuzz/`), after replaying every input that once found a bug
   (`fuzz/regressions/`);
 - `cargo deny check`: fails on any crate in the dependency tree with a
   RustSec advisory (vulnerable, unmaintained, unsound, or yanked), on a
@@ -90,7 +90,7 @@ publet.
 
 **Fuzzing found** three bugs before pubunit was published, all in printing
 a parsed expression back as text. `1+3+3` and `1-+3` read as symbols ending
-in a digit or a sign, which printed as other expressions; such symbols are
+in a digit or a sign, which printed as other expressions. Such symbols are
 now refused, as no UCUM atom has one. A reciprocal lost its parentheses:
 `(/s).m` printed as `/s.m`, which means 1/(s.m). Each has a regression test.
 Timing reduction found a fourth: `[pi]64` written 120 times, under 1 KB,

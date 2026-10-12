@@ -40,7 +40,7 @@ doc-coverage-check: ## Fail if a public function has no example, a test covers n
 	python3 tools/doc-coverage.py --check
 
 # What pubunit reads from outside: expressions and definitions (fuzz/).
-FUZZ_TARGETS := parse reduce definitions
+FUZZ_TARGETS := parse reduce definitions rational
 FUZZ_SECONDS ?= 60
 
 fuzz-smoke: ## Replay fuzz regressions, then fuzz each target briefly (needs nightly and cargo-fuzz)

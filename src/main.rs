@@ -110,9 +110,13 @@ fn registry(o: &Options) -> Result<Registry, String> {
 }
 
 fn run(args: &[String]) -> Result<String, String> {
+    // Help wins wherever it is asked for: `pubunit convert --help` too.
+    if args.iter().any(|a| a == "-h" || a == "--help") {
+        return Ok(USAGE.trim_end().to_owned());
+    }
     match args.first().map(String::as_str) {
         None => return Err(format!("no command\n\n{USAGE}")),
-        Some("-h" | "--help" | "help") => return Ok(USAGE.trim_end().to_owned()),
+        Some("help") => return Ok(USAGE.trim_end().to_owned()),
         Some("--version") => return Ok(format!("pubunit {}", env!("CARGO_PKG_VERSION"))),
         _ => {}
     }

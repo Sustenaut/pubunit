@@ -77,10 +77,17 @@ pub enum Term {
 /// # Errors
 ///
 /// Fails with [`Error::Syntax`] when the text is not a UCUM expression:
-/// empty, not printable ASCII, unbalanced, or with an operator where a unit
-/// belongs. Also fails, with [`Error::TooLarge`], on input beyond
-/// [`MAX_LEN`] bytes, [`MAX_DEPTH`] levels of parentheses, an exponent
-/// beyond ±[`MAX_EXPONENT`], or a factor beyond `u64`.
+/// - it is empty, or holds a character that is not printable ASCII;
+/// - a parenthesis, bracket or brace is not closed, or a `{` is nested
+///   inside an annotation;
+/// - an operator or an exponent stands where a unit belongs;
+/// - a symbol outside brackets ends in a digit or a sign, which no UCUM
+///   atom does, so `1+3+3` cannot be read two ways.
+///
+/// Fails with [`Error::TooLarge`] on input beyond [`MAX_LEN`] bytes or
+/// [`MAX_DEPTH`] levels of parentheses, on an exponent beyond
+/// ±[`MAX_EXPONENT`], however many digits it has, and on a factor beyond
+/// `u64`.
 ///
 /// ```
 /// let t = pubunit::parse("mg/dL")?;
@@ -242,13 +249,14 @@ impl Parser<'_> {
         let exponent = match exponent {
             None => 1,
             Some(e) => {
-                let n: i64 = e.parse().map_err(|_| self.error("an exponent too large"))?;
+                let too_large = || Error::TooLarge {
+                    what: format!("the exponent {e} (at most ±{MAX_EXPONENT})"),
+                };
+                let n: i64 = e.parse().map_err(|_| too_large())?;
                 if n.unsigned_abs() > u64::from(MAX_EXPONENT.unsigned_abs()) {
-                    return Err(Error::TooLarge {
-                        what: format!("the exponent {e} (at most ±{MAX_EXPONENT})"),
-                    });
+                    return Err(too_large());
                 }
-                i32::try_from(n).map_err(|_| self.error("an exponent too large"))?
+                i32::try_from(n).map_err(|_| too_large())?
             }
         };
         if symbol.is_empty() || symbol.starts_with(['+', '-']) {
@@ -432,6 +440,10 @@ mod tests {
     #[test]
     fn limits_hold() {
         assert!(matches!(parse("m65"), Err(Error::TooLarge { .. })));
+        assert!(matches!(
+            parse("m99999999999999999999"),
+            Err(Error::TooLarge { .. })
+        ));
         assert!(parse("m64").is_ok());
         let deep = format!("{}m{}", "(".repeat(40), ")".repeat(40));
         assert!(matches!(parse(&deep), Err(Error::TooLarge { .. })));

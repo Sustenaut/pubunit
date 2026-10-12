@@ -162,7 +162,9 @@ impl Dimension {
 
     /// A UCUM expression of exactly this dimension, with factor 1: base
     /// units with positive exponents, then `/` and those with negative ones.
-    /// A brace base, which UCUM gives no exponent, is repeated.
+    /// A brace base, which UCUM gives no exponent, is repeated, so the text
+    /// grows with the exponents: a kind's are held within ±127 when
+    /// declared, but a `Dimension` built in code is not.
     ///
     /// ```
     /// use pubunit::{Dimension, Registry};
