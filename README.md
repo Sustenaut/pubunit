@@ -7,8 +7,9 @@ A publet's data table states a unit for each column, such as `kW.h/{tray}`.
 pubunit says what that unit means, and whether it fits what the column
 measures. Trays, currencies and CO2 equivalents are dimensions of their own,
 so a kilogram of CO2e is not a kilogram of basil. Quantity kinds are
-declared, so a joule is not a newton-metre. Every factor and conversion is
-an exact rational, never a float.
+declared, so a joule is not a newton-metre, and a starting set of them
+comes from [QUDT](https://www.qudt.org). Every factor and conversion is an
+exact rational, never a float.
 
 Licensed under Apache-2.0.
 
@@ -65,8 +66,10 @@ cargo install --locked pubunit
 | `check UNIT KIND` | Checks that `UNIT` measures the declared kind `KIND`. |
 | `kinds` | Lists the declared kinds: `name: dimension [units]`. |
 | `ucum` | Prints the UCUM version the atoms come from. |
+| `qudt` | Prints the QUDT release `--qudt` reads, and its licence. |
 
 `--defs FILE` reads definitions (the format is in the crate documentation),
+`--qudt` declares QUDT's quantity kinds (`qudt:Energy`, `qudt:Torque`) after them,
 and `--annotations=strict|ucum` says how an undeclared `{annotation}` standing
 alone is read. The exit status is 0 on success and 1 on any failure, with the
 reason on stderr. The commands, options and exit status, the output of

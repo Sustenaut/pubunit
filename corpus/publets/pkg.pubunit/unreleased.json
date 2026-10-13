@@ -3,6 +3,22 @@
     {
       "category": "internal",
       "change": "Update other crates the supply-chain audits cover"
+    },
+    {
+      "category": "changed",
+      "change": "QuantityKind has an optional label, what people call the kind when that differs from its name: a struct literal of QuantityKind needs the new field"
+    },
+    {
+      "category": "added",
+      "change": "QUDT's quantity kinds: Definitions::qudt gives 869 kinds from QUDT 3.5.2, named qudt:Energy and so on with their QUDT URI as id, and Definitions::qudt_source names the release; the pubunit command reads them with --qudt and states the release with pubunit qudt"
+    },
+    {
+      "category": "added",
+      "change": "Definitions::extend appends one set of definitions to another, so declared kinds and QUDT's load together"
+    },
+    {
+      "category": "internal",
+      "change": "tools/gen-qudt-kinds.py generates data/qudt/ from the pinned QUDT release with Oxigraph at build time, and the security checks hold it to that release; data/qudt/REPORT.md lists each kind and unit left out and why"
     }
   ],
   "comment": "Changes not yet released. One row per change: category changed or removed (a published interface changed: major), added (a feature: minor), or fixed or security (patch). `pubrel add` appends one; `pubrel summary` sets the release's summary; `pubrel prepare` moves them into the package publet."

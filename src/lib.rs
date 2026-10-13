@@ -35,7 +35,7 @@ assert!(reg.check_kind("kg/{tray}", "climate impact per tray").is_err());
 | [`Reduced`] | a unit as a [`Dimension`] and an exact factor, with checked `*`, `/` and powers |
 | [`Dimension`] | integer exponents over base units, UCUM's seven and declared ones |
 | [`Rational`] | the exact numbers every factor and converted value is |
-| [`Definitions`] | the serde format for declared [`BaseDimension`]s, [`UnitDefinition`]s and [`QuantityKind`]s |
+| [`Definitions`] | the serde format for declared [`BaseDimension`]s, [`UnitDefinition`]s and [`QuantityKind`]s, and QUDT's kinds ([`Definitions::qudt`]) |
 | [`Error`] | why something failed |
 
 The invariants it keeps:
@@ -57,6 +57,7 @@ The rest of this page:
 
 * [The definitions format](#the-definitions-format): declaring dimensions,
   units and kinds as data.
+* [QUDT's quantity kinds](#qudts-quantity-kinds): a starting set of kinds.
 * [Examples](#example-a-currency): a short cookbook, failures included.
 * [What this version does not do](#what-this-version-does-not-do).
 * [Why this crate?](#why-this-crate) and [related crates](#related-crates).
@@ -158,6 +159,34 @@ assert_eq!(v.to_string(), "18");
 # Ok::<(), pubunit::Error>(())
 ```
 
+# QUDT's quantity kinds
+
+[`Definitions::qudt`] gives a starting set of kinds from [QUDT], generated
+at build time from a pinned release ([`Definitions::qudt_source`]) and
+checked against it, so the set is reproducible and a QUDT update arrives as
+a reviewable change. pubunit reads no RDF. Each kind is named `qudt:` and
+its QUDT local name, and carries its QUDT URI as `id`.
+
+QUDT's dimension vectors are restated in UCUM's bases: current becomes
+charge per second, and plane angle, which QUDT calls dimensionless, keeps
+UCUM's `rad`. Kinds UCUM cannot express are left out, chiefly those
+involving amount of substance, which UCUM counts as a number. The crate's
+`data/qudt/REPORT.md` lists every kind and unit left out, and why.
+
+```
+use pubunit::{Definitions, Registry};
+
+let mut defs = Definitions::from_json(r#"{
+  "dimensions": [{ "symbol": "{tray}", "name": "growing tray" }]
+}"#)?;
+defs.extend(Definitions::qudt()?);
+let reg = Registry::with_definitions(&defs)?;
+reg.check_kind("kW.h", "qudt:Energy")?;
+assert!(reg.check_kind("J", "qudt:Torque").is_err());
+assert!(reg.check_kind("Hz", "qudt:Activity").is_err());
+# Ok::<(), pubunit::Error>(())
+```
+
 # Example: what is refused
 
 ```
@@ -205,8 +234,8 @@ assert_eq!(reg.reduce_term(&tree)?, reg.reduce("N")?);
   (`[IU]`) are commensurable with nothing.
 - **Case-insensitive UCUM** (`c/i`): only the case-sensitive form is read.
 - **Prefixes on declared units:** `k[EUR]` is not a unit.
-- **Kinds from QUDT:** kinds are declared by hand. A starting set
-  generated from QUDT, at build time, is planned.
+- **Amount of substance:** UCUM counts moles as a number, so QUDT's kinds
+  that involve it are left out of [`Definitions::qudt`].
 - **Checking derivations:** pubunit gives the dimension of a formula's
   result (`kW.h/{tray}.kg{CO2e}/(kW.h)` is `g.{CO2e}.{tray}-1`). Checking a
   method's declared input and output kinds against it is planned.
@@ -269,6 +298,7 @@ cargo-semver-checks, through pubrel, so a break recorded as anything less
 fails CI.
 
 [UCUM]: https://ucum.org/ucum
+[QUDT]: https://www.qudt.org
 [ucum-units]: https://crates.io/crates/ucum-units
 [octofhir-ucum]: https://crates.io/crates/octofhir-ucum
 [uom]: https://crates.io/crates/uom
@@ -284,7 +314,7 @@ mod registry;
 mod table;
 mod ucum_table;
 
-pub use defs::{BaseDimension, Definitions, QuantityKind, UnitDefinition};
+pub use defs::{BaseDimension, Definitions, QuantityKind, QudtSource, UnitDefinition};
 pub use dimension::{Dimension, UCUM_BASE_UNITS};
 pub use error::Error;
 pub use expr::{MAX_DEPTH, MAX_EXPONENT, MAX_LEN, Term, parse};

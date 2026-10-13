@@ -49,7 +49,94 @@ pub struct Definitions {
     pub kinds: Vec<QuantityKind>,
 }
 
+/// The QUDT release [`Definitions::qudt`] was generated from.
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
+#[serde(deny_unknown_fields)]
+#[non_exhaustive]
+pub struct QudtSource {
+    /// The QUDT release, such as `3.5.2`.
+    pub version: String,
+    /// Where the release archive was downloaded from.
+    pub url: String,
+    /// The archive's SHA-256, in hex.
+    pub sha256: String,
+    /// QUDT's licence, and the attribution it asks for.
+    pub license: String,
+}
+
+/// data/qudt/kinds.json, written by tools/gen-qudt-kinds.py.
+const QUDT_KINDS: &str = include_str!("../data/qudt/kinds.json");
+/// data/qudt/source.json: the release that file was generated from.
+const QUDT_SOURCE: &str = include_str!("../data/qudt/source.json");
+
 impl Definitions {
+    /// QUDT's quantity kinds, from the release [`Definitions::qudt_source`]
+    /// names: each kind QUDT gives a dimension that UCUM can express, with
+    /// the UCUM codes of its applicable units that reduce to it.
+    ///
+    /// Each is named `qudt:` and its QUDT local name, labelled with QUDT's
+    /// English label, and carries its QUDT URI as `id`. The set is generated
+    /// at build time and checked against the pinned release; pubunit reads
+    /// no RDF. The crate's `data/qudt/REPORT.md` lists the kinds left out
+    /// and why: amount of substance, which UCUM counts as a number, is the
+    /// commonest reason.
+    ///
+    /// ```
+    /// use pubunit::{Definitions, Registry};
+    ///
+    /// let reg = Registry::with_definitions(&Definitions::qudt()?)?;
+    /// reg.check_kind("kW.h", "qudt:Energy")?;
+    /// reg.check_kind("N.m", "qudt:Torque")?;
+    /// // Energy and torque share a dimension, but not their units.
+    /// assert!(reg.check_kind("N.m", "qudt:Energy").is_err());
+    /// # Ok::<(), pubunit::Error>(())
+    /// ```
+    ///
+    /// # Errors
+    ///
+    /// Fails with [`Error::Json`] only if the embedded file is malformed,
+    /// which the crate's tests rule out.
+    pub fn qudt() -> Result<Definitions, Error> {
+        Definitions::from_json(QUDT_KINDS)
+    }
+
+    /// The QUDT release [`Definitions::qudt`] comes from.
+    ///
+    /// ```
+    /// let source = pubunit::Definitions::qudt_source()?;
+    /// assert_eq!(source.version, "3.5.2");
+    /// # Ok::<(), pubunit::Error>(())
+    /// ```
+    ///
+    /// # Errors
+    ///
+    /// Fails with [`Error::Json`] only if the embedded file is malformed.
+    pub fn qudt_source() -> Result<QudtSource, Error> {
+        serde_json::from_str(QUDT_SOURCE).map_err(|e| Error::Json {
+            message: e.to_string(),
+        })
+    }
+
+    /// Append `other`'s dimensions, units and kinds to these, in order.
+    ///
+    /// ```
+    /// use pubunit::{Definitions, Registry};
+    ///
+    /// let mut defs = Definitions::from_json(r#"{
+    ///   "dimensions": [{ "symbol": "{tray}", "name": "growing tray" }]
+    /// }"#)?;
+    /// defs.extend(Definitions::qudt()?);
+    /// let reg = Registry::with_definitions(&defs)?;
+    /// assert_eq!(reg.reduce("kW.h/{tray}")?.dimension().to_string(), "m2.s-2.g.{tray}-1");
+    /// assert!(reg.kind("qudt:Energy").is_some());
+    /// # Ok::<(), pubunit::Error>(())
+    /// ```
+    pub fn extend(&mut self, other: Definitions) {
+        self.dimensions.extend(other.dimensions);
+        self.units.extend(other.units);
+        self.kinds.extend(other.kinds);
+    }
+
     /// Read definitions from JSON.
     ///
     /// # Errors
@@ -125,7 +212,13 @@ pub struct UnitDefinition {
 #[serde(deny_unknown_fields)]
 pub struct QuantityKind {
     /// The kind's name: `climate impact`, `electrical energy per tray`.
+    /// QUDT's kinds are named `qudt:` and their QUDT local name, such as
+    /// `qudt:Energy` (see [`Definitions::qudt`]).
     pub name: String,
+    /// What people call it, when that differs from `name`: QUDT's English
+    /// label, such as `Energy`. Kept, not read.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub label: Option<String>,
     /// Its dimension.
     pub dimension: Dimension,
     /// The units that may measure it. Absent, any unit of the dimension

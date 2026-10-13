@@ -188,3 +188,51 @@ fn the_ucum_source_is_stated_and_complete() {
         }
     }
 }
+
+// covers: Definitions::qudt, Definitions::qudt_source, Definitions::extend
+#[test]
+fn the_qudt_kinds_load_beside_declared_ones() {
+    let source = Definitions::qudt_source().unwrap();
+    assert_eq!(source.version, "3.5.2");
+    assert_eq!(source.sha256.len(), 64);
+    let qudt = Definitions::qudt().unwrap();
+    assert!(qudt.kinds.len() > 800);
+    for k in &qudt.kinds {
+        let local = k.name.strip_prefix("qudt:").unwrap();
+        assert_eq!(
+            k.id.as_deref(),
+            Some(format!("http://qudt.org/vocab/quantitykind/{local}").as_str())
+        );
+        assert!(!k.units.as_ref().unwrap().is_empty(), "{}", k.name);
+    }
+
+    let mut defs = Definitions::from_json(
+        &std::fs::read_to_string(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/examples/publication-0.json"
+        ))
+        .unwrap(),
+    )
+    .unwrap();
+    let own = defs.kinds.len();
+    defs.extend(qudt);
+    let reg = Registry::with_definitions(&defs).unwrap();
+    assert!(reg.kinds().count() > own + 800);
+    assert_eq!(
+        reg.kind("qudt:Energy").unwrap().label.as_deref(),
+        Some("Energy")
+    );
+    reg.check_kind("kW.h", "qudt:Energy").unwrap();
+    reg.check_kind("kW.h/{tray}", "electrical energy per tray")
+        .unwrap();
+    assert!(reg.check_kind("N.m", "qudt:Energy").is_err());
+    assert!(reg.check_kind("Hz", "qudt:Activity").is_err());
+    // QUDT calls plane angle dimensionless; UCUM, and so pubunit, does not.
+    assert_eq!(
+        reg.kind("qudt:AngularVelocity")
+            .unwrap()
+            .dimension
+            .to_string(),
+        "s-1.rad"
+    );
+}

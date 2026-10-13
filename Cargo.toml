@@ -12,7 +12,7 @@ readme = "README.md"
 keywords = ["ucum", "units", "dimensional-analysis", "quantity-kind", "publet"]
 categories = ["science", "parser-implementations", "command-line-utilities"]
 # Anchored with /: like gitignore patterns, a bare name matches at any depth.
-include = ["/src/**/*.rs", "/README.md", "/CHANGELOG.md", "/LICENSE", "/NOTICE", "/SECURITY.md", "/SUPPLY-CHAIN.md", "/TESTING.md"]
+include = ["/src/**/*.rs", "/data/qudt/kinds.json", "/data/qudt/source.json", "/data/qudt/REPORT.md", "/README.md", "/CHANGELOG.md", "/LICENSE", "/NOTICE", "/SECURITY.md", "/SUPPLY-CHAIN.md", "/TESTING.md"]
 
 [package.metadata.docs.rs]
 all-features = true

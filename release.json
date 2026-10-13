@@ -42,6 +42,11 @@
         "version": "cargo tree --depth 1 --prefix none -e normal | grep ucum-units"
       },
       {
+        "name": "QUDT kinds match the pinned QUDT release",
+        "run": "make -s qudt-kinds-check",
+        "version": "python3 -c \"import json; print('QUDT', json.load(open('data/qudt/source.json'))['version'])\""
+      },
+      {
         "name": "quality audit current",
         "run": ".venv/bin/pubkit audit --check",
         "version": ".venv/bin/pubkit --version"

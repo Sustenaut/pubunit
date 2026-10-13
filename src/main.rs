@@ -22,9 +22,12 @@ commands:
   check UNIT KIND            check that UNIT measures the declared kind KIND
   kinds                      list the declared kinds
   ucum                       print the UCUM version the atoms come from
+  qudt                       print the QUDT release --qudt reads
 
 options:
   --defs FILE                read declared dimensions, units and kinds (JSON)
+  --qudt                     declare QUDT's quantity kinds, named qudt:Energy
+                             and so on, after any --defs
   --annotations=strict|ucum  an undeclared {annotation} standing alone is an
                              error (strict, the default) or 1 (ucum)
   --kind KIND                convert: both units must measure KIND
@@ -60,6 +63,7 @@ const MAX_PLACES: u32 = 1000;
 #[derive(Default)]
 struct Options {
     defs: Option<String>,
+    qudt: bool,
     annotations: Annotations,
     kind: Option<String>,
     places: Option<u32>,
@@ -78,6 +82,7 @@ fn options(args: &[String]) -> Result<Options, String> {
         match a.as_str() {
             "--defs" => o.defs = Some(value("--defs")?),
             "--kind" => o.kind = Some(value("--kind")?),
+            "--qudt" => o.qudt = true,
             "--places" => {
                 let v = value("--places")?;
                 let places: u32 = v
@@ -98,13 +103,21 @@ fn options(args: &[String]) -> Result<Options, String> {
 }
 
 fn registry(o: &Options) -> Result<Registry, String> {
-    let reg = match &o.defs {
-        None => Registry::ucum(),
+    let mut defs = match &o.defs {
+        None => Definitions::default(),
         Some(path) => {
             let text = std::fs::read_to_string(path).map_err(|e| format!("reading {path}: {e}"))?;
-            let defs = Definitions::from_json(&text).map_err(|e| format!("{path}: {e}"))?;
-            Registry::with_definitions(&defs).map_err(|e| format!("{path}: {e}"))?
+            Definitions::from_json(&text).map_err(|e| format!("{path}: {e}"))?
         }
+    };
+    if o.qudt {
+        defs.extend(Definitions::qudt().map_err(|e| format!("QUDT kinds: {e}"))?);
+    }
+    let reg = if defs == Definitions::default() {
+        Registry::ucum()
+    } else {
+        let source = o.defs.as_deref().unwrap_or("QUDT kinds");
+        Registry::with_definitions(&defs).map_err(|e| format!("{source}: {e}"))?
     };
     Ok(reg.with_annotations(o.annotations))
 }
@@ -175,9 +188,18 @@ fn run(args: &[String]) -> Result<String, String> {
                 s.ucum_version, s.revision_date, s.ucum_units_version
             ))
         }
+        ["qudt"] => {
+            let s = Definitions::qudt_source().map_err(msg)?;
+            let n = Definitions::qudt().map_err(msg)?.kinds.len();
+            Ok(format!(
+                "QUDT {}, {n} quantity kinds, from {} (sha256 {}), {}",
+                s.version, s.url, s.sha256, s.license
+            ))
+        }
         [] => Err(format!("no command\n\n{USAGE}")),
         [
-            cmd @ ("parse" | "validate" | "reduce" | "convert" | "check" | "kinds" | "ucum"),
+            cmd @ ("parse" | "validate" | "reduce" | "convert" | "check" | "kinds" | "ucum"
+            | "qudt"),
             ..,
         ] => {
             let usage = match *cmd {
