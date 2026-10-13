@@ -9,9 +9,9 @@ include pubkit.mk
 export PUBUNIT_BIN_DIR ?= $(CURDIR)/target/debug
 
 .DEFAULT_GOAL := help
-.PHONY: check clean guard-floats ucum-table ucum-table-check
+.PHONY: check clean guard-floats ucum-table ucum-table-check qudt-kinds qudt-kinds-check
 
-check: sync-check fmt-check guard-floats ucum-table-check lint test doc doc-coverage-check functional vectors-check publish-check supply-chain-check vet deny ## Everything CI runs
+check: sync-check fmt-check guard-floats ucum-table-check qudt-kinds-check lint test doc doc-coverage-check functional vectors-check publish-check supply-chain-check vet deny ## Everything CI runs
 
 clean: ## Remove build artifacts
 	cargo clean
@@ -25,3 +25,9 @@ ucum-table: ## Regenerate src/ucum_table.rs from the essence file ucum-units bun
 
 ucum-table-check: ## Fail if src/ucum_table.rs differs from the pinned ucum-units' essence file
 	python3 tools/gen-ucum-table.py --check
+
+qudt-kinds: build ## Regenerate data/qudt/ from the QUDT release data/qudt/source.json pins
+	.venv/bin/python tools/gen-qudt-kinds.py
+
+qudt-kinds-check: build ## Fail if data/qudt/ differs from what the pinned QUDT release gives
+	.venv/bin/python tools/gen-qudt-kinds.py --check

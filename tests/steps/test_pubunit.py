@@ -20,6 +20,7 @@ scenarios("../features/definitions.feature")
 scenarios("../features/parse.feature")
 scenarios("../features/cli.feature")
 scenarios("../features/conformance.feature")
+scenarios("../features/qudt.feature")
 
 
 # --- givens ------------------------------------------------------------------

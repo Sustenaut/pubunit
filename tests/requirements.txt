@@ -1,3 +1,6 @@
 # The functional suite's direct dependencies. Exact pins only; the resolved
 # set with hashes lives in requirements.lock. Regenerate it with `pubkit lock`.
 -r requirements-pubkit.txt
+# Reads QUDT's Turtle at build time, for tools/gen-qudt-kinds.py. pubunit
+# itself reads no RDF.
+pyoxigraph==0.5.11

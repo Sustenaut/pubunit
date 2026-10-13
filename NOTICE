@@ -26,6 +26,23 @@ This product is not affiliated with, sponsored by, or endorsed by the
 Regenstrief Institute or the UCUM Organization.
 
 
+QUDT
+----
+
+data/qudt/kinds.json is generated from the QUDT quantity kinds and units
+vocabularies of QUDT release 3.5.2 (data/qudt/source.json names the archive
+and its SHA-256). It holds each kept kind's local name, English label, URI,
+dimension vector and the UCUM codes of its applicable units.
+
+  QUDT is licensed under the Creative Commons Attribution 4.0
+  International License (CC BY 4.0),
+  <https://creativecommons.org/licenses/by/4.0/>. Attribution: QUDT.org.
+
+pubunit changes the data: it restates dimension vectors in UCUM's base
+units, and leaves out kinds and units UCUM cannot express (listed in
+data/qudt/REPORT.md).
+
+
 UCUM functional tests
 ---------------------
 
