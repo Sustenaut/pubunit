@@ -40,6 +40,11 @@
         "name": "UCUM table matches the pinned ucum-units",
         "run": "python3 tools/gen-ucum-table.py --check",
         "version": "cargo tree --depth 1 --prefix none -e normal | grep ucum-units"
+      },
+      {
+        "name": "quality audit current",
+        "run": ".venv/bin/pubkit audit --check",
+        "version": ".venv/bin/pubkit --version"
       }
     ],
     "facts": [
