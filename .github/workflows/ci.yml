@@ -18,9 +18,10 @@ jobs:
   # and vet. pubunit adds its own gates: the no-float guard and the UCUM
   # table check.
   ci:
-    uses: schryer/pubkit/.github/workflows/rust-ci.yml@v0.11.1
+    uses: schryer/pubkit/.github/workflows/rust-ci.yml@v0.11.2
     with:
       gates: guard-floats ucum-table-check
+    secrets: inherit
 
   # The shared release workflow: on a pull request, a code change records
   # what it changes, the public API moves only as far as those changes
