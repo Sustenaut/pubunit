@@ -39,7 +39,7 @@ def text(q):
 
 # --- exact definitions, in metres, kilograms, seconds, kelvin -------------
 
-INCH = F("0.0254")                      # m, international yard and pound, 1959
+INCH = F(254, 10_000)                   # m (0.0254), international yard and pound, 1959
 FOOT = 12 * INCH
 YARD = 3 * FOOT
 MILE = 5280 * FOOT
@@ -54,7 +54,8 @@ CALORIE = F("4.184")                    # J, thermochemical
 GRAVITY = F("9.80665")                  # m/s2
 ATMOSPHERE = F(101325)                  # Pa
 BAR = F(100000)
-PSI = POUND * GRAVITY / INCH**2         # lbf/in2, in Pa
+SQUARE_INCH = INCH * INCH               # m2
+PSI = POUND * GRAVITY / SQUARE_INCH     # lbf/in2, in Pa
 
 
 def conversions():

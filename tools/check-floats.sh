@@ -17,7 +17,7 @@ hits=$(
     | grep -vE '^[^:]+:[0-9]+:[[:space:]]*(//|/\*|\*)' \
     || true
 )
-if [ -n "$hits" ]; then
+if [[ -n "$hits" ]]; then
   echo "error: floating point is forbidden in src/" >&2
   echo "$hits" >&2
   exit 1
