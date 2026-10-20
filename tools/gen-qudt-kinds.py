@@ -40,7 +40,7 @@ FILES = [
     "vocab/quantitykinds/VOCAB_QUDT-QUANTITY-KINDS-ALL.ttl",
     "vocab/unit/VOCAB_QUDT-UNITS-ALL.ttl",
 ]
-QK = "http://qudt.org/vocab/quantitykind/"
+QK = "http://qudt.org/vocab/quantitykind/"  # NOSONAR: RDF namespace IRI, not fetched
 PREFIXES = """
 PREFIX qudt: <http://qudt.org/schema/qudt/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -88,7 +88,15 @@ def ucum_dimension(vector: str) -> dict[str, int] | str:
     return {k: v for k, v in dims.items() if v}
 
 
-TOKEN = re.compile(r"^(.*?)(-?\d+)?$")
+def split_exponent(part: str) -> tuple[str, int]:
+    """A term's symbol and its trailing exponent, which defaults to 1."""
+    sym = part.rstrip("0123456789")
+    if sym == part:
+        return sym, 1
+    exp = part[len(sym):]
+    if sym.endswith("-"):
+        sym, exp = sym[:-1], "-" + exp
+    return sym, int(exp)
 
 
 def parse_dimension(text: str) -> dict[str, int]:
@@ -96,8 +104,8 @@ def parse_dimension(text: str) -> dict[str, int]:
         return {}
     out = {}
     for part in text.split("."):
-        sym, exp = TOKEN.match(part).groups()
-        out[sym] = int(exp or 1)
+        sym, exp = split_exponent(part)
+        out[sym] = exp
     return out
 
 
