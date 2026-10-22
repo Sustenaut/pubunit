@@ -8,7 +8,7 @@ License, Version 2.0 (see LICENSE).
 UCUM
 ----
 
-src/ucum_table.rs is generated from ucum-essence.xml, the machine-readable
+src/ucum_table.generated.rs is generated from ucum-essence.xml, the machine-readable
 table of the Unified Code for Units of Measure, as bundled verbatim in the
 ucum-units crate (version 0.1.0). It holds UCUM's prefix and unit codes, and
 their values and definitions as UCUM writes them.

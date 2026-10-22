@@ -1,5 +1,5 @@
 //! The shape of UCUM's atom and prefix table. The rows themselves are in
-//! `ucum_table.rs`, generated from the essence file that ucum-units bundles.
+//! `ucum_table.generated.rs`, generated from the essence file that ucum-units bundles.
 
 /// A UCUM prefix: its code and its value as UCUM writes it (`1e3`).
 #[derive(Debug)]

@@ -19,6 +19,10 @@
     {
       "category": "internal",
       "change": "tools/gen-qudt-kinds.py generates data/qudt/ from the pinned QUDT release with Oxigraph at build time, and the security checks hold it to that release; data/qudt/REPORT.md lists each kind and unit left out and why"
+    },
+    {
+      "category": "internal",
+      "change": "The UCUM table is src/ucum_table.generated.rs, whose header names its generator, source and the date its content last changed, and SonarQube Cloud's duplication check skips generated files"
     }
   ],
   "comment": "Changes not yet released. One row per change: category changed or removed (a published interface changed: major), added (a feature: minor), or fixed or security (patch). `pubrel add` appends one; `pubrel summary` sets the release's summary; `pubrel prepare` moves them into the package publet."
