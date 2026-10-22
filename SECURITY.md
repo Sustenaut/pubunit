@@ -44,7 +44,7 @@ never a panic, a hang, or an allocation out of proportion to the input.
   `expect_used`, `panic`, `indexing_slicing` and the float lints, and
   warnings as errors;
 - a guard that no `f32` or `f64` appears in `src/`;
-- a check that `src/ucum_table.rs` matches the essence file of the pinned
+- a check that `src/ucum_table.generated.rs` matches the essence file of the pinned
   ucum-units;
 - `cargo doc`, with warnings as errors, and `cargo publish --dry-run`;
 - the unit tests, doctests, property tests, test vectors from NIST SP 811

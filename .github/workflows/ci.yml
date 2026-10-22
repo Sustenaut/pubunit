@@ -16,11 +16,13 @@ jobs:
   # Gherkin suite with UCUM's functional tests, the test vectors and the
   # supply-chain report; the oldest promised Rust; fuzzing; and cargo deny
   # and vet. pubunit adds its own gates: the no-float guard and the UCUM
-  # table check.
+  # table check. SonarQube Cloud's duplication check skips generated files
+  # (*.generated.rs): the UCUM table repeats one struct shape per atom.
   ci:
     uses: schryer/pubkit/.github/workflows/rust-ci.yml@v0.12.1
     with:
       gates: guard-floats ucum-table-check
+      sonar-args: -Dsonar.cpd.exclusions=**/*.generated.rs
     secrets: inherit
 
   # The shared release workflow: on a pull request, a code change records

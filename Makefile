@@ -20,10 +20,10 @@ clean: ## Remove build artifacts
 guard-floats: ## No f32 or f64 anywhere in src/
 	./tools/check-floats.sh
 
-ucum-table: ## Regenerate src/ucum_table.rs from the essence file ucum-units bundles
+ucum-table: ## Regenerate src/ucum_table.generated.rs from the essence file ucum-units bundles
 	python3 tools/gen-ucum-table.py
 
-ucum-table-check: ## Fail if src/ucum_table.rs differs from the pinned ucum-units' essence file
+ucum-table-check: ## Fail if src/ucum_table.generated.rs differs from the pinned ucum-units' essence file
 	python3 tools/gen-ucum-table.py --check
 
 qudt-kinds: build ## Regenerate data/qudt/ from the QUDT release data/qudt/source.json pins
