@@ -5,3 +5,4 @@ __pycache__/
 *.pyc
 # A corpus's working store and secret key; objects/ is its durable form.
 /corpus/.publet/
+/coverage/

@@ -4,3 +4,6 @@
 # Reads QUDT's Turtle at build time, for tools/gen-qudt-kinds.py. pubunit
 # itself reads no RDF.
 pyoxigraph==0.5.11
+# Measures the maintainer scripts' tests (`make script-tests`) for SonarQube
+# Cloud.
+coverage==7.16.2
