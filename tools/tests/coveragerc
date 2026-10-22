@@ -1,7 +1,7 @@
 # Coverage of the maintainer scripts, for `make script-tests`. Paths are
-# relative to the repository so SonarQube Cloud can match them.
+# relative to the repository so SonarQube Cloud can match them. The tests
+# are measured too: Sonar counts them as source, so they need coverage.
 [run]
 relative_files = True
 include = tools/*
-omit = tools/tests/*
 data_file = coverage/.coverage-scripts
