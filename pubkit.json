@@ -1,4 +1,5 @@
 {
   "kind": "rust",
-  "bin": "pubunit"
+  "bin": "pubunit",
+  "protect": {"checks": ["ci / passed", "release / release"]}
 }
