@@ -1,4 +1,8 @@
 {
   "kind": "rust",
+  "ci": {
+    "with": {"gates": "guard-floats ucum-table-check", "functional": "script-tests", "sonar-args": "-Dsonar.cpd.exclusions=**/*.generated.rs"},
+    "release": {"pubrel": "0.5.4"}
+  },
   "bin": "pubunit"
 }
