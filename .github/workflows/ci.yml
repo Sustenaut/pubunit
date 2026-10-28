@@ -20,7 +20,7 @@ jobs:
   # scripts. SonarQube Cloud's duplication check skips generated files
   # (*.generated.rs): the UCUM table repeats one struct shape per atom.
   ci:
-    uses: schryer/pubkit/.github/workflows/rust-ci.yml@v0.12.1
+    uses: schryer/pubkit/.github/workflows/rust-ci.yml@v0.14.3
     with:
       gates: guard-floats ucum-table-check
       functional: script-tests
