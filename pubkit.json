@@ -1,10 +1,20 @@
 {
   "kind": "rust",
   "ci": {
-    "with": {"gates": "guard-floats ucum-table-check", "functional": "script-tests", "sonar-args": "-Dsonar.cpd.exclusions=**/*.generated.rs"},
-    "release": {"pubrel": "0.5.4"}
+    "with": {
+      "gates": "guard-floats ucum-table-check",
+      "functional": "script-tests",
+      "sonar-args": "-Dsonar.cpd.exclusions=**/*.generated.rs"
+    },
+    "release": {
+      "pubrel": "0.5.5"
+    }
   },
-  "security": {"sonar": {"args": "-Dsonar.issue.ignore.multicriteria=pubkitpins -Dsonar.issue.ignore.multicriteria.pubkitpins.ruleKey=githubactions:S7637 -Dsonar.issue.ignore.multicriteria.pubkitpins.resourceKey=.github/workflows/*.yml"}},
   "bin": "pubunit",
-  "protect": {"checks": ["ci / passed", "release / release"]}
+  "protect": {
+    "checks": [
+      "ci / passed",
+      "release / release"
+    ]
+  }
 }
