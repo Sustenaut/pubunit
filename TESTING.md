@@ -77,11 +77,11 @@ A test claims only items of the module it tests. The files are linked below.
 
 Test files:
 
-- [`src/dimension.rs`](https://github.com/schryer/pubunit/blob/main/src/dimension.rs)
-- [`src/expr.rs`](https://github.com/schryer/pubunit/blob/main/src/expr.rs)
-- [`src/rational.rs`](https://github.com/schryer/pubunit/blob/main/src/rational.rs)
-- [`src/registry.rs`](https://github.com/schryer/pubunit/blob/main/src/registry.rs)
-- [`tests/oracle.rs`](https://github.com/schryer/pubunit/blob/main/tests/oracle.rs)
-- [`tests/properties.rs`](https://github.com/schryer/pubunit/blob/main/tests/properties.rs)
-- [`tests/registry.rs`](https://github.com/schryer/pubunit/blob/main/tests/registry.rs)
-- [`tests/vectors.rs`](https://github.com/schryer/pubunit/blob/main/tests/vectors.rs)
+- [`src/dimension.rs`](https://github.com/Sustenaut/pubunit/blob/main/src/dimension.rs)
+- [`src/expr.rs`](https://github.com/Sustenaut/pubunit/blob/main/src/expr.rs)
+- [`src/rational.rs`](https://github.com/Sustenaut/pubunit/blob/main/src/rational.rs)
+- [`src/registry.rs`](https://github.com/Sustenaut/pubunit/blob/main/src/registry.rs)
+- [`tests/oracle.rs`](https://github.com/Sustenaut/pubunit/blob/main/tests/oracle.rs)
+- [`tests/properties.rs`](https://github.com/Sustenaut/pubunit/blob/main/tests/properties.rs)
+- [`tests/registry.rs`](https://github.com/Sustenaut/pubunit/blob/main/tests/registry.rs)
+- [`tests/vectors.rs`](https://github.com/Sustenaut/pubunit/blob/main/tests/vectors.rs)
