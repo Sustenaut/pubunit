@@ -15,6 +15,12 @@
     "checks": [
       "ci / passed",
       "release / release"
-    ]
+    ],
+    "release_app": 5529889
+  },
+  "nightly": {
+    "pins": {
+      "crates": []
+    }
   }
 }
