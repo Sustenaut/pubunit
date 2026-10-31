@@ -4,7 +4,8 @@
       "plugin": "crates-io.publish",
       "paths": [
         "src/lib.rs"
-      ]
+      ],
+      "mode": "required"
     },
     {
       "plugin": "github.app-token",
@@ -12,7 +13,8 @@
         ".github/workflows/main.yml",
         ".github/workflows/pr.yml",
         ".github/workflows/queue.yml"
-      ]
+      ],
+      "mode": "required"
     },
     {
       "plugin": "sonarcloud.scan",
@@ -21,7 +23,8 @@
         ".github/workflows/nightly.yml",
         ".github/workflows/pr.yml",
         ".github/workflows/queue.yml"
-      ]
+      ],
+      "mode": "required"
     }
   ],
   "other_hosts": [
