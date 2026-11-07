@@ -6,3 +6,6 @@ __pycache__/
 # A corpus's working store and secret key; objects/ is its durable form.
 /corpus/.publet/
 /coverage/
+
+# Local secrets, such as the Bitwarden token ./with-secrets reads: never committed.
+.env
