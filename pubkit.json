@@ -29,5 +29,10 @@
     {"path": "corpus/.publet/retired/signing.key.cfyhgq3juyzcna7g7co4zchwci4q2l637xieal733ft6sje3dftq", "bitwarden": {"project": {"id": "377de170-5487-40f7-9a01-b4f50064e1c5", "name": "Pub"}, "name": "pub-signing-key-pubunit-retired-cfyhgq3j"}},
     {"path": "corpus/.publet/retired/signing.key.david-2026-10-12", "bitwarden": {"project": {"id": "377de170-5487-40f7-9a01-b4f50064e1c5", "name": "Pub"}, "name": "pub-signing-key-pubunit-retired-david-2026-10-12"}},
     {"path": "corpus/.publet/retired/signing.key.unused-m7jvnq-2026-10-12", "bitwarden": {"project": {"id": "377de170-5487-40f7-9a01-b4f50064e1c5", "name": "Pub"}, "name": "pub-signing-key-pubunit-retired-unused-m7jvnq-2026-10-12"}}
-  ]
+  ],
+  "mirror": {
+    "wheels": "https://storage.sustenaut.eu/wheels",
+    "terraform": "https://storage.sustenaut.eu/terraform",
+    "pypi": "https://storage.sustenaut.eu/pypi"
+  }
 }
