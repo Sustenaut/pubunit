@@ -28,7 +28,7 @@ audit-as-crates-io = false
 [[exemptions.bitflags]]
 version = "2.13.2"
 criteria = "safe-to-run"
-notes = "Test-only: reached through proptest, a dev-dependency, so never built into pubunit. No imported audit covers this version as of 2026-10-12 (cargo vet); publet exempts the same version."
+notes = "Test-only: reached through proptest, a dev-dependency, so never built into pubunit. No imported audit covers this version as of 2026-11-11 (cargo vet). publet exempts the same version."
 
 [[exemptions.cfg-if]]
 version = "1.0.5"
@@ -38,22 +38,22 @@ notes = "Test-only, through proptest's dependencies. Imported audits as of 2026-
 [[exemptions.fastrand]]
 version = "2.5.0"
 criteria = "safe-to-run"
-notes = "Test-only: reached through proptest, a dev-dependency, so never built into pubunit. No imported audit covers this version as of 2026-10-12 (cargo vet); publet exempts the same version."
+notes = "Test-only: reached through proptest, a dev-dependency, so never built into pubunit. No imported audit covers this version as of 2026-11-11 (cargo vet). publet exempts the same version."
 
 [[exemptions.getrandom]]
 version = "0.4.3"
 criteria = "safe-to-run"
-notes = "Test-only: reached through proptest, a dev-dependency, so never built into pubunit. No imported audit covers this version as of 2026-10-12 (cargo vet); publet exempts the same version."
+notes = "Test-only: reached through proptest, a dev-dependency, so never built into pubunit. No imported audit covers this version as of 2026-11-11 (cargo vet). publet exempts the same version."
 
 [[exemptions.libc]]
 version = "0.2.189"
 criteria = "safe-to-run"
-notes = "Test-only: reached through proptest, a dev-dependency, so never built into pubunit. No imported audit covers this version as of 2026-10-12 (cargo vet)."
+notes = "Test-only: reached through proptest, a dev-dependency, so never built into pubunit. No imported audit covers this version as of 2026-11-11 (cargo vet)."
 
 [[exemptions.linux-raw-sys]]
 version = "0.12.1"
 criteria = "safe-to-run"
-notes = "Test-only: reached through proptest, a dev-dependency, so never built into pubunit. No imported audit covers this version as of 2026-10-12 (cargo vet); publet exempts the same version."
+notes = "Test-only: reached through proptest, a dev-dependency, so never built into pubunit. No imported audit covers this version as of 2026-11-11 (cargo vet). publet exempts the same version."
 
 [[exemptions.memchr]]
 version = "2.8.3"
@@ -63,27 +63,27 @@ notes = "No full audit in the imported sets as of 2026-10-12; Zcash's safe-to-de
 [[exemptions.proptest]]
 version = "1.11.0"
 criteria = "safe-to-run"
-notes = "Test-only: reached through proptest, a dev-dependency, so never built into pubunit. No imported audit covers this version as of 2026-10-12 (cargo vet); publet exempts the same version."
+notes = "Test-only: reached through proptest, a dev-dependency, so never built into pubunit. No imported audit covers this version as of 2026-11-11 (cargo vet). publet exempts the same version."
 
 [[exemptions.r-efi]]
 version = "5.2.0"
 criteria = "safe-to-run"
-notes = "Test-only: reached through proptest, a dev-dependency, so never built into pubunit. No imported audit covers this version as of 2026-10-12 (cargo vet); publet exempts the same version."
+notes = "Test-only: reached through proptest, a dev-dependency, so never built into pubunit. No imported audit covers this version as of 2026-11-11 (cargo vet). publet exempts the same version."
 
 [[exemptions.r-efi]]
 version = "6.0.0"
 criteria = "safe-to-run"
-notes = "Test-only: reached through proptest, a dev-dependency, so never built into pubunit. No imported audit covers this version as of 2026-10-12 (cargo vet); publet exempts the same version."
+notes = "Test-only: reached through proptest, a dev-dependency, so never built into pubunit. No imported audit covers this version as of 2026-11-11 (cargo vet). publet exempts the same version."
 
 [[exemptions.rand]]
 version = "0.9.5"
 criteria = "safe-to-run"
-notes = "Test-only: reached through proptest, a dev-dependency, so never built into pubunit. No imported audit covers this version as of 2026-10-12 (cargo vet); publet exempts the same version."
+notes = "Test-only: reached through proptest, a dev-dependency, so never built into pubunit. No imported audit covers this version as of 2026-11-11 (cargo vet). publet exempts the same version."
 
 [[exemptions.regex-syntax]]
 version = "0.8.11"
 criteria = "safe-to-run"
-notes = "Test-only: reached through proptest, a dev-dependency, so never built into pubunit. No imported audit covers this version as of 2026-10-12 (cargo vet); publet exempts the same version."
+notes = "Test-only: reached through proptest, a dev-dependency, so never built into pubunit. No imported audit covers this version as of 2026-11-11 (cargo vet). publet exempts the same version."
 
 [[exemptions.roxmltree]]
 version = "0.21.1"
@@ -91,26 +91,26 @@ criteria = "safe-to-deploy"
 notes = "Build-time only: ucum-units' build script reads its bundled ucum-essence.xml with it; nothing of it is linked into pubunit. No audit in the imported sets as of 2026-10-12. It forbids unsafe code (#![forbid(unsafe_code)] in src/lib.rs, read 2026-10-12)."
 
 [[exemptions.rustix]]
-version = "1.1.5"
+version = "1.1.6"
 criteria = "safe-to-run"
-notes = "Test-only: reached through proptest, a dev-dependency, so never built into pubunit. No imported audit covers this version as of 2026-10-12 (cargo vet)."
+notes = "Test-only: reached through proptest, a dev-dependency, so never built into pubunit. No imported audit covers this version as of 2026-11-11 (cargo vet)."
 
 [[exemptions.rusty-fork]]
 version = "0.3.1"
 criteria = "safe-to-run"
-notes = "Test-only: reached through proptest, a dev-dependency, so never built into pubunit. No imported audit covers this version as of 2026-10-12 (cargo vet); publet exempts the same version."
+notes = "Test-only: reached through proptest, a dev-dependency, so never built into pubunit. No imported audit covers this version as of 2026-11-11 (cargo vet). publet exempts the same version."
 
 [[exemptions.windows-sys]]
 version = "0.61.2"
 criteria = "safe-to-run"
-notes = "Test-only: reached through proptest, a dev-dependency, so never built into pubunit. No imported audit covers this version as of 2026-10-12 (cargo vet); publet exempts the same version."
+notes = "Test-only: reached through proptest, a dev-dependency, so never built into pubunit. No imported audit covers this version as of 2026-11-11 (cargo vet). publet exempts the same version."
 
 [[exemptions.zerocopy]]
 version = "0.8.62"
 criteria = "safe-to-run"
-notes = "Test-only: reached through proptest, a dev-dependency, so never built into pubunit. No imported audit covers this version as of 2026-10-12 (cargo vet)."
+notes = "Test-only: reached through proptest, a dev-dependency, so never built into pubunit. No imported audit covers this version as of 2026-11-11 (cargo vet)."
 
 [[exemptions.zerocopy-derive]]
 version = "0.8.62"
 criteria = "safe-to-run"
-notes = "Test-only: reached through proptest, a dev-dependency, so never built into pubunit. No imported audit covers this version as of 2026-10-12 (cargo vet)."
+notes = "Test-only: reached through proptest, a dev-dependency, so never built into pubunit. No imported audit covers this version as of 2026-11-11 (cargo vet)."
