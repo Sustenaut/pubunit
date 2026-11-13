@@ -9,8 +9,8 @@ user-login = "cuviper"
 user-name = "Josh Stone"
 
 [[publisher.itoa]]
-version = "1.0.18"
-when = "2026-03-20"
+version = "1.0.19"
+when = "2026-11-09"
 user-id = 3618
 user-login = "dtolnay"
 user-name = "David Tolnay"

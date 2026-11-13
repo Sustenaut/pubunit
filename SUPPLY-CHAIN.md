@@ -13,7 +13,7 @@ macro (P): code that runs while compiling.
 | Crate | Version | Build-time code | Status | Evidence |
 |---|---|---|---|---|
 | `autocfg` | 1.5.1 | - | trusted publisher (cuviper) | Trusted by Mozilla, ISRG and the Bytecode Alliance, whose audits this project imports; pubunit adopts their decision rather than re-reviewing, as publet and pubrel do. |
-| `itoa` | 1.0.18 | - | trusted publisher (dtolnay) | Trusted by Mozilla, ISRG and the Bytecode Alliance, whose audits this project imports; pubunit adopts their decision rather than re-reviewing, as publet and pubrel do. |
+| `itoa` | 1.0.19 | - | trusted publisher (dtolnay) | Trusted by Mozilla, ISRG and the Bytecode Alliance, whose audits this project imports; pubunit adopts their decision rather than re-reviewing, as publet and pubrel do. |
 | `memchr` | 2.8.3 | - | not audited (exempt) | No full audit in the imported sets as of 2026-10-12; Zcash's safe-to-deploy deltas reach 2.7.5, as pubrel records for the same version. Reached through serde_json, and through roxmltree at build time. |
 | `num-bigint` | 0.5.1 | - | trusted publisher (cuviper) | Trusted by Mozilla, ISRG and the Bytecode Alliance, whose audits this project imports; pubunit adopts their decision rather than re-reviewing, as publet and pubrel do. |
 | `num-integer` | 0.1.47 | - | trusted publisher (cuviper) | Trusted by Mozilla, ISRG and the Bytecode Alliance, whose audits this project imports; pubunit adopts their decision rather than re-reviewing, as publet and pubrel do. |
