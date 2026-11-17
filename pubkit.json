@@ -7,7 +7,7 @@
       "sonar-args": "-Dsonar.cpd.exclusions=**/*.generated.rs"
     },
     "release": {
-      "pubrel": "0.7.0"
+      "pubrel": "0.7.1"
     }
   },
   "bin": "pubunit",
