@@ -1,9 +1,9 @@
 """Fixtures for pubunit's functional suite.
 
 Every scenario drives the built `pubunit` as a user would. The binary is
-resolved by pubkit's `binary` fixture from PUBUNIT_BIN_DIR, so another
+resolved by pubrules's `binary` fixture from PUBUNIT_BIN_DIR, so another
 implementation runs this suite by setting one variable. The steps that
-judge a result (`it succeeds`, `it prints "..."`) are pubkit's.
+judge a result (`it succeeds`, `it prints "..."`) are pubrules's.
 """
 
 from __future__ import annotations
