@@ -1,9 +1,9 @@
 """Fixtures for pubunit's functional suite.
 
-Every scenario drives the built `pubunit` as a user would. The binary is
-resolved by pubrules's `binary` fixture from PUBUNIT_BIN_DIR, so another
-implementation runs this suite by setting one variable. The steps that
-judge a result (`it succeeds`, `it prints "..."`) are pubrules's.
+Every scenario drives the built `pubunit` as a user would, as pubtest's
+program under test, from PUBUNIT_BIN_DIR, so another implementation runs
+this suite by setting one variable. The steps that judge a result are
+pubtest's.
 """
 
 from __future__ import annotations
@@ -15,11 +15,6 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parent.parent
-
-
-@pytest.fixture
-def pubunit(binary) -> Path:
-    return binary("pubunit")
 
 
 @pytest.fixture(scope="session")

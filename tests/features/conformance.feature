@@ -5,10 +5,14 @@ Feature: pubunit agrees with UCUM's functional tests
   copy that the pinned ucum-units bundles. They are not copied into this
   repository. Annotations are read as UCUM reads them.
 
+  Background:
+    Given a scratch directory
+    And the program under test is "pubunit"
+
   Scenario: Every validation case is judged as UCUM judges it
     When I run every validation case
-    Then every case agrees
+    Then the result is empty
 
   Scenario: Every conversion case gives UCUM's outcome, at its precision
     When I run every conversion case
-    Then every case agrees
+    Then the result is empty

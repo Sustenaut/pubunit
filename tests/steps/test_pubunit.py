@@ -1,16 +1,16 @@
-"""Steps for every pubunit feature."""
+"""Steps for every pubunit feature: pubunit runs through pubtest's `I run`,
+as its program under test, and pubtest's steps judge what it did. What is
+the suite's own is UCUM's functional tests, run case by case, and one
+check of the JSON tree `parse` prints."""
 
 from __future__ import annotations
 
 import json
-import shlex
 import xml.etree.ElementTree as ET
 from decimal import Decimal
 from pathlib import Path
 
-from pytest_bdd import given, parsers, scenarios, then, when
-
-from conftest import ROOT
+from pytest_bdd import parsers, scenarios, then, when
 
 scenarios("../features/reduce.feature")
 scenarios("../features/convert.feature")
@@ -23,38 +23,16 @@ scenarios("../features/conformance.feature")
 scenarios("../features/qudt.feature")
 
 
-# --- givens ------------------------------------------------------------------
-
-
-@given(parsers.parse('the definitions "{path}"'))
-def definitions_file(ctx, path: str):
-    ctx.defs = str(ROOT / path)
-
-
-@given("the definitions")
-def definitions_inline(ctx, tmp_path: Path, docstring: str):
-    path = tmp_path / "definitions.json"
-    path.write_text(docstring)
-    ctx.defs = str(path)
-
-
 # --- whens -------------------------------------------------------------------
+# Each runs every case of UCUM's functional tests, which this repository may
+# not copy (they are under the Eclipse Public License 1.0), so they cannot be
+# a Scenario Outline's examples. The result is the cases pubunit disagrees on.
 
 
-@when(parsers.parse("I run pubunit {args}"), target_fixture="result")
-def run_pubunit(ctx, run, pubunit, args: str):
-    argv = shlex.split(args)
-    defs = getattr(ctx, "defs", None)
-    if defs and argv and not argv[0].startswith("--"):
-        argv = ["--defs", defs, *argv]
-    return run(pubunit, *argv)
-
-
-@when("I run every validation case", target_fixture="disagreements")
-def every_validation_case(run, pubunit, ucum_functional_tests: Path):
-    root = ET.parse(ucum_functional_tests).getroot()
+def validation_disagreements(run, pubunit: Path, tests: Path) -> list[str]:
+    root = ET.parse(tests).getroot()
     cases = [c for c in root.find("validation") if c.tag == "case"]
-    assert len(cases) > 500
+    assert len(cases) > 500, f"only {len(cases)} validation cases"
     bad = []
     for c in cases:
         result = run(pubunit, "--annotations=ucum", "validate", c.get("unit"))
@@ -64,6 +42,11 @@ def every_validation_case(run, pubunit, ucum_functional_tests: Path):
     return bad
 
 
+@when("I run every validation case")
+def every_validation_case(ctx, run, binary, ucum_functional_tests: Path):
+    ctx.attempt(lambda: validation_disagreements(run, binary("pubunit"), ucum_functional_tests))
+
+
 def _decimal(text: str) -> Decimal:
     if "/" in text:
         num, den = text.split("/")
@@ -71,11 +54,10 @@ def _decimal(text: str) -> Decimal:
     return Decimal(text)
 
 
-@when("I run every conversion case", target_fixture="disagreements")
-def every_conversion_case(run, pubunit, ucum_functional_tests: Path):
-    root = ET.parse(ucum_functional_tests).getroot()
+def conversion_disagreements(run, pubunit: Path, tests: Path) -> list[str]:
+    root = ET.parse(tests).getroot()
     cases = [c for c in root.find("conversion") if c.tag == "case"]
-    assert len(cases) > 20
+    assert len(cases) > 20, f"only {len(cases)} conversion cases"
     bad = []
     for c in cases:
         result = run(pubunit, "--annotations=ucum", "convert",
@@ -94,19 +76,15 @@ def every_conversion_case(run, pubunit, ucum_functional_tests: Path):
     return bad
 
 
+@when("I run every conversion case")
+def every_conversion_case(ctx, run, binary, ucum_functional_tests: Path):
+    ctx.attempt(lambda: conversion_disagreements(run, binary("pubunit"), ucum_functional_tests))
+
+
 # --- thens -------------------------------------------------------------------
 
 
-@then(parsers.parse('the output is "{text}"'))
-def output_is(result, text: str):
-    assert result.stdout.strip() == text, result.describe()
-
-
-@then(parsers.parse('the first key is "{key}"'))
-def first_key(result, key: str):
+@then(parsers.parse('the JSON it prints has the one key "{key}"'))
+def one_key(result, key: str):
+    """pubtest reads a value at a key, but not which keys there are."""
     assert list(json.loads(result.stdout)) == [key], result.describe()
-
-
-@then("every case agrees")
-def every_case_agrees(disagreements):
-    assert not disagreements, "\n".join(disagreements)
