@@ -4,8 +4,12 @@ Feature: A unit reduces to a dimension and an exact factor
   in grams, as UCUM's base unit. Factors come from UCUM's own decimal
   strings, read as rationals, so they are exact.
 
+  Background:
+    Given a scratch directory
+    And the program under test is "pubunit"
+
   Scenario Outline: Standard UCUM units reduce exactly
-    When I run pubunit reduce "<unit>"
+    When I run "pubunit reduce '<unit>'"
     Then it succeeds
     And it prints "dimension: <dimension>"
     And it prints "factor: <factor>"
@@ -27,13 +31,13 @@ Feature: A unit reduces to a dimension and an exact factor
       | %              | 1          | 0.01             |
 
   Scenario: A temperature with an offset reduces when it stands alone
-    When I run pubunit reduce "Cel"
+    When I run "pubunit reduce Cel"
     Then it succeeds
     And it prints "dimension: K"
     And it prints "offset: 273.15"
 
   Scenario Outline: Units with no linear factor are refused
-    When I run pubunit reduce "<unit>"
+    When I run "pubunit reduce '<unit>'"
     Then it fails
     And stderr mentions "<reason>"
 
@@ -45,7 +49,7 @@ Feature: A unit reduces to a dimension and an exact factor
       | [IU]/L | arbitrary unit      |
 
   Scenario Outline: What is not UCUM is refused
-    When I run pubunit reduce "<unit>"
+    When I run "pubunit reduce '<unit>'"
     Then it fails
     And stderr mentions "<reason>"
 

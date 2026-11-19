@@ -4,12 +4,16 @@ Feature: Definitions that cannot be used are refused
   do not have its dimension are refused when the definitions are read, not
   when a unit happens to use them.
 
+  Background:
+    Given a scratch directory
+    And the program under test is "pubunit"
+
   Scenario Outline: A bad definition is refused when read
-    Given the definitions
+    Given a file "definitions.json" holding:
       """
       <json>
       """
-    When I run pubunit reduce "m"
+    When I run "pubunit --defs definitions.json reduce m"
     Then it fails
     And stderr mentions "<reason>"
 

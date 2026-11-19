@@ -4,25 +4,29 @@ Feature: The parse tree is public
   tree follows UCUM's grammar: `.` and `/` are left-associative and of
   equal precedence.
 
+  Background:
+    Given a scratch directory
+    And the program under test is "pubunit"
+
   Scenario: A quotient parses into its parts
-    When I run pubunit parse "kW.h/{tray}"
+    When I run "pubunit parse 'kW.h/{tray}'"
     Then it succeeds
     And it prints ""div""
     And it prints ""symbol": "kW""
     And it prints ""annotation": "tray""
 
   Scenario: Operators are left-associative
-    When I run pubunit parse "kg/m.s"
-    Then the first key is "mul"
+    When I run "pubunit parse kg/m.s"
+    Then the JSON it prints has the one key "mul"
 
   Scenario: An annotation after a unit belongs to it
-    When I run pubunit parse "kg{CO2e}"
+    When I run "pubunit parse 'kg{CO2e}'"
     Then it prints ""symbol": "kg""
     And it prints ""annotation": "CO2e""
 
   Scenario: Every symbol is checked to resolve
-    When I run pubunit validate "mg/dL"
+    When I run "pubunit validate mg/dL"
     Then it succeeds
-    When I run pubunit validate "mg/dLL"
+    When I run "pubunit validate mg/dLL"
     Then it fails
     And stderr mentions "not a known unit"
